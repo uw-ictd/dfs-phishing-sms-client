@@ -87,5 +87,10 @@
         </LinearLayout>
 
     </RelativeLayout>
+    <include
+        android:id="@+id/conversation_grade"
+        layout="@layout/view_compose"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
 
 </LinearLayout>
