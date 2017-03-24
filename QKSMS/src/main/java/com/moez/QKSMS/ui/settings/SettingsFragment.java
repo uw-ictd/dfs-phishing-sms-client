@@ -124,6 +124,9 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public static final String NOTIFICATIONS = "pref_key_notifications";
     public static final String NOTIFICATION_LED = "pref_key_led";
     public static final String NOTIFICATION_LED_COLOR = "pref_key_theme_led";
+    //added for UW app
+    public static final String UW_CONVO_PRIVATE = "pref_key_uw_convo_private";
+    //end UW adds
     public static final String WAKE = "pref_key_wake";
     public static final String NOTIFICATION_TICKER = "pref_key_ticker";
     public static final String PRIVATE_NOTIFICATION = "pref_key_notification_private";
