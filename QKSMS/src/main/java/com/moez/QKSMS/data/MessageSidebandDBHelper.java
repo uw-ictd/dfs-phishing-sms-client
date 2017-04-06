@@ -32,7 +32,7 @@ public class MessageSidebandDBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_CREATE =
             "CREATE TABLE " + TABLE_NAME_SIDEBANDDB + " (" +
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    COLUMN_MESSAGEDB_ID + " INTEGER," +
+                    COLUMN_MESSAGEDB_ID + " TEXT," +
                     COLUMN_EXTRAINFO + " TEXT," +
                     COLUMN_SENT_TO_UW + " INTEGER DEFAULT 0);";
 

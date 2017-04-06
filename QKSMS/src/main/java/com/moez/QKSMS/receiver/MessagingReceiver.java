@@ -1,9 +1,11 @@
 package com.moez.QKSMS.receiver;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -11,6 +13,7 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 import com.moez.QKSMS.common.BlockedConversationHelper;
 import com.moez.QKSMS.common.ConversationPrefsHelper;
+import com.moez.QKSMS.common.google.NullItemLoadedFuture;
 import com.moez.QKSMS.common.utils.PackageUtils;
 import com.moez.QKSMS.data.Message;
 import com.moez.QKSMS.service.NotificationService;
@@ -19,11 +22,19 @@ import com.moez.QKSMS.transaction.SmsHelper;
 import com.moez.QKSMS.ui.settings.SettingsFragment;
 import org.mistergroup.muzutozvednout.ShouldIAnswerBinder;
 
+//UW ADD
+import com.moez.QKSMS.data.MessageSidebandDBHelper;
+
+
 public class MessagingReceiver extends BroadcastReceiver {
     private final String TAG = "MessagingReceiver";
 
     private Context mContext;
     private SharedPreferences mPrefs;
+
+    //UW ADD
+    private SQLiteDatabase sideDb;
+    private MessageSidebandDBHelper mDbHelper;
 
     private String mAddress;
     private String mBody;
@@ -97,6 +108,20 @@ public class MessagingReceiver extends BroadcastReceiver {
 
     private void insertMessageAndNotify() {
         mUri = SmsHelper.addMessageToInbox(mContext, mAddress, mBody, mDate);
+
+        if(sideDb == null) {
+            if (mDbHelper == null) {
+                mDbHelper = new MessageSidebandDBHelper(mContext);
+            }
+            sideDb = mDbHelper.getWritableDatabase();
+        }
+
+        ContentValues vals = new ContentValues();
+        vals.put(mDbHelper.COLUMN_MESSAGEDB_ID, mUri.toString());
+        vals.put(mDbHelper.COLUMN_EXTRAINFO,"Extra Stuff");
+
+        long newRowId = sideDb.insert(mDbHelper.TABLE_NAME_SIDEBANDDB, null, vals);
+
 
         Message message = new Message(mContext, mUri);
         ConversationPrefsHelper conversationPrefs = new ConversationPrefsHelper(mContext, message.getThreadId());
