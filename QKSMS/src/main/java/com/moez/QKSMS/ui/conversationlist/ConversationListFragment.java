@@ -3,6 +3,7 @@ package com.moez.QKSMS.ui.conversationlist;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -17,7 +18,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.melnykov.fab.FloatingActionButton;
@@ -34,6 +39,7 @@ import com.moez.QKSMS.enums.QKPreference;
 import com.moez.QKSMS.transaction.SmsHelper;
 import com.moez.QKSMS.ui.MainActivity;
 import com.moez.QKSMS.ui.ThemeManager;
+import com.moez.QKSMS.ui.TutorialSlidePagerActiviy;
 import com.moez.QKSMS.ui.base.QKFragment;
 import com.moez.QKSMS.ui.base.RecyclerCursorAdapter;
 import com.moez.QKSMS.ui.compose.ComposeActivity;
@@ -43,6 +49,7 @@ import com.moez.QKSMS.ui.settings.SettingsFragment;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.*;
 
 
 public class ConversationListFragment extends QKFragment implements LoaderManager.LoaderCallbacks<Cursor>,
@@ -54,6 +61,9 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
     @Bind(R.id.empty_state_icon) ImageView mEmptyStateIcon;
     @Bind(R.id.conversations_list) RecyclerView mRecyclerView;
     @Bind(R.id.fab) FloatingActionButton mFab;
+
+    // change to Image view or Button
+    @Bind(R.id.slides_start) Button mSlideStart;
 
     private ConversationListAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
@@ -80,6 +90,11 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
         mLayoutManager = new LinearLayoutManager(mContext);
         mConversationDetailsDialog = new ConversationDetailsDialog(mContext, getFragmentManager());
 
+//        mSlideStart = mContext.findViewById(R.id.slides_start);
+//        mSlideStart.setOnClickListener(v -> {
+//            mContext.startActivity(TutorialSlidePagerActiviy.class);
+//        });
+
         LiveViewManager.registerView(QKPreference.THEME, this, key -> {
             if (!mViewHasLoaded) {
                 return;
@@ -88,6 +103,9 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
             mFab.setColorNormal(ThemeManager.getColor());
             mFab.setColorPressed(ColorUtils.lighten(ThemeManager.getColor()));
             mFab.getDrawable().setColorFilter(ThemeManager.getTextOnColorPrimary(), PorterDuff.Mode.SRC_ATOP);
+
+            mSlideStart.findViewById(R.id.slides_start);
+
 
             mEmptyStateIcon.setColorFilter(ThemeManager.getTextOnBackgroundPrimary());
         });
@@ -114,6 +132,14 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
             } else {
                 mContext.startActivity(ComposeActivity.class);
             }
+        });
+
+        mSlideStart.setOnClickListener(v -> {
+            /*
+            System.out.println("Made it");
+            Intent intent = new Intent(getActivity(), TutorialSlidePagerActiviy.class);
+            startActivity(intent); */
+            mContext.startActivity(TutorialSlidePagerActiviy.class);
         });
 
         mViewHasLoaded = true;
@@ -166,6 +192,11 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
 
             menu.findItem(R.id.menu_block).setVisible(mPrefs.getBoolean(SettingsFragment.BLOCKED_ENABLED, false));
 
+            menu.findItem(R.id.menu_mark_fraud).setIcon(R.drawable.ic_mark_fraud);
+            menu.findItem(R.id.menu_mark_unkown).setIcon(R.drawable.ic_mark_unkown);
+            menu.findItem(R.id.menu_mark_spam).setIcon(R.drawable.ic_mark_spam);
+            menu.findItem(R.id.menu_mark_check).setIcon(R.drawable.ic_mark_check);
+
             menu.findItem(R.id.menu_mark_read).setIcon(getUnreadWeight() >= 0 ? R.drawable.ic_mark_read : R.drawable.ic_mark_unread);
             menu.findItem(R.id.menu_mark_read).setTitle(getUnreadWeight() >= 0 ? R.string.menu_mark_read : R.string.menu_mark_unread);
             menu.findItem(R.id.menu_block).setTitle(getBlockedWeight() > 0 ? R.string.menu_unblock_conversations : R.string.menu_block_conversations);
@@ -212,9 +243,24 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
                         BlockedConversationHelper.blockConversation(mPrefs, threadId);
                     }
                 }
+
                 mAdapter.disableMultiSelectMode(true);
                 initLoaderManager();
                 return true;
+
+            // TODO Add functionality to following four cases:
+            case R.id.menu_mark_fraud:
+                System.out.println("fraud");
+
+            case R.id.menu_mark_spam:
+                System.out.println("spam");
+
+            case R.id.menu_mark_check:
+                System.out.println("check");
+
+            case R.id.menu_mark_unkown:
+                System.out.println("unkown");
+
 
             case R.id.menu_delete_failed:
                 DialogHelper.showDeleteFailedMessagesDialog((MainActivity) mContext, mAdapter.getSelectedItems().keySet());
@@ -347,4 +393,6 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
     public void update(Observable observable, Object data) {
         initLoaderManager();
     }
+
+
 }

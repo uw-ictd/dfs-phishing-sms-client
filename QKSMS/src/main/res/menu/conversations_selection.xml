@@ -2,28 +2,56 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_delete"
-        android:icon="@drawable/ic_delete"
-        android:title="@string/menu_delete"
-        android:visible="true"
-        app:showAsAction="ifRoom" />
+ android:id="@+id/menu_delete"
+ android:icon="@drawable/ic_delete"
+ android:title="@string/menu_delete"
+ android:visible="true"
+ app:showAsAction="always" />
 
     <item
-        android:id="@+id/menu_mark_read"
-        android:icon="@drawable/ic_accept"
-        android:title="@string/menu_mark_read"
-        android:visible="true"
-        app:showAsAction="ifRoom" />
+ android:id="@+id/menu_mark_read"
+ android:icon="@drawable/ic_accept"
+ android:title="@string/menu_mark_read"
+ android:visible="true"
+ app:showAsAction="always" />
 
     <item
-        android:id="@+id/menu_block"
-        android:title="@string/menu_block_conversations" />
+ android:id="@+id/menu_mark_fraud"
+ android:icon="@drawable/ic_mark_fraud"
+ android:title="mark as fraud"
+ android:visible="true"
+ app:showAsAction="always" />
 
     <item
-        android:id="@+id/menu_delete_failed"
-        android:title="@string/menu_delete_failed" />
+android:id="@+id/menu_mark_spam"
+android:icon="@drawable/ic_mark_spam"
+android:title="mark as spam"
+android:visible="true"
+app:showAsAction="always" />
 
     <item
-        android:id="@+id/menu_done"
-        android:title="@string/menu_done" />
+android:id="@+id/menu_mark_check"
+android:icon="@drawable/ic_mark_check"
+android:title="mark as ok"
+android:visible="true"
+app:showAsAction="always" />
+
+    <item
+android:id="@+id/menu_mark_unkown"
+android:icon="@drawable/ic_mark_unkown"
+android:title="mark as unkown"
+android:visible="true"
+app:showAsAction="always" />
+
+    <item
+ android:id="@+id/menu_block"
+ android:title="@string/menu_block_conversations" />
+
+    <item
+ android:id="@+id/menu_delete_failed"
+ android:title="@string/menu_delete_failed" />
+
+    <item
+ android:id="@+id/menu_done"
+ android:title="@string/menu_done" />
 </menu>

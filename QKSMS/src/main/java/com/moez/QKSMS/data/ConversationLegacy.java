@@ -227,6 +227,13 @@ public class ConversationLegacy {
         return ids;
     }
 
+//    public void setTaggedFraud() {
+//        try {
+//            cursor = context.getContentResolver().query(getUri(), MessageColumns.PROJECTION, null, null, SmsHelper.sortDateDesc);
+//            cursor.moveToFirst();
+//        }
+//    }
+
     public void markRead() {
 
         new Thread() {

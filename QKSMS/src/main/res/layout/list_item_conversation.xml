@@ -114,6 +114,27 @@
                     android:layout_height="16dp"
                     android:visibility="gone" />
 
+                <ImageView
+                    android:id="@+id/conversation_tagged_fraud"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:visibility="gone" />
+                <ImageView
+                    android:id="@+id/conversation_tagged_unkown"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:visibility="gone" />
+                <ImageView
+                    android:id="@+id/conversation_tagged_spam"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:visibility="gone" />
+                <ImageView
+                    android:id="@+id/conversation_tagged_check"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:visibility="gone" />
+
             </LinearLayout>
 
         </LinearLayout>

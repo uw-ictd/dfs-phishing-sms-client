@@ -29,6 +29,10 @@ public class ConversationListViewHolder extends ClickyViewHolder<Conversation> i
     protected ImageView mutedView;
     protected ImageView unreadView;
     protected ImageView errorIndicator;
+    protected ImageView taggedFraudIndicator;
+    protected ImageView taggedUnkownIndicator;
+    protected ImageView taggedSpamIndicator;
+    protected ImageView taggedCheckIndicator;
     protected AvatarView mAvatarView;
     protected ImageView mSelected;
 
@@ -43,6 +47,10 @@ public class ConversationListViewHolder extends ClickyViewHolder<Conversation> i
         mutedView = (ImageView) view.findViewById(R.id.conversation_list_muted);
         unreadView = (ImageView) view.findViewById(R.id.conversation_list_unread);
         errorIndicator = (ImageView) view.findViewById(R.id.conversation_list_error);
+        taggedFraudIndicator = (ImageView) view.findViewById(R.id.conversation_tagged_fraud);
+        taggedUnkownIndicator = (ImageView) view.findViewById(R.id.conversation_tagged_unkown);
+        taggedSpamIndicator = (ImageView) view.findViewById(R.id.conversation_tagged_spam);
+        taggedCheckIndicator = (ImageView) view.findViewById(R.id.conversation_tagged_check);
         mAvatarView = (AvatarView) view.findViewById(R.id.conversation_list_avatar);
         mSelected = (ImageView) view.findViewById(R.id.selected);
     }

@@ -362,6 +362,12 @@
         </activity-alias>
 
         <activity
+            android:name=".ui.TutorialSlidePagerActiviy"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeLight" />
+
+
+        <activity
             android:name=".ui.welcome.WelcomeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeLight" />

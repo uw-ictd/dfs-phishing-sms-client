@@ -43,11 +43,19 @@ public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationL
         holder.mutedView.setImageResource(R.drawable.ic_notifications_muted);
         holder.unreadView.setImageResource(R.drawable.ic_unread_indicator);
         holder.errorIndicator.setImageResource(R.drawable.ic_error);
+        holder.taggedFraudIndicator.setImageResource(R.drawable.ic_mark_fraud);
+        holder.taggedUnkownIndicator.setImageResource(R.drawable.ic_mark_unkown);
+        holder.taggedSpamIndicator.setImageResource(R.drawable.ic_mark_spam);
+        holder.taggedCheckIndicator.setImageResource(R.drawable.ic_mark_check);
 
         LiveViewManager.registerView(QKPreference.THEME, this, key -> {
             holder.mutedView.setColorFilter(ThemeManager.getColor());
             holder.unreadView.setColorFilter(ThemeManager.getColor());
             holder.errorIndicator.setColorFilter(ThemeManager.getColor());
+            holder.taggedFraudIndicator.setColorFilter(ThemeManager.getColor());
+            holder.taggedUnkownIndicator.setColorFilter(ThemeManager.getColor());
+            holder.taggedSpamIndicator.setColorFilter(ThemeManager.getColor());
+            holder.taggedCheckIndicator.setColorFilter(ThemeManager.getColor());
         });
 
         LiveViewManager.registerView(QKPreference.BACKGROUND, this, key -> {
@@ -71,6 +79,9 @@ public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationL
                 .getNotificationsEnabled() ? View.GONE : View.VISIBLE);
 
         holder.errorIndicator.setVisibility(conversation.hasError() ? View.VISIBLE : View.GONE);
+
+        //TODO change
+        holder.taggedFraudIndicator.setVisibility(true ? View.VISIBLE : View.GONE);
 
         final boolean hasUnreadMessages = conversation.hasUnreadMessages();
         if (hasUnreadMessages) {

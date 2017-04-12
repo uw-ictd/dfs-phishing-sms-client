@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
+    <!--Strings added for DFS-->
+    <!--String shown on first tutorial slide -->
+    <string name="tutorial_1">This is how you use our app.</string>
+    <!--String shown on first tutorial slide -->
+    <string name="tutorial_2">This is how you use our app (with some details).</string>
+    <!--String shown on first tutorial slide -->
+    <string name="tutorial_3">This is how you use our app (with some extra details).</string>
+
     <!--Slogan-->
     <string name="slogan">Love texting again.</string>
     <!--Text shown when a phone number cannot be found-->
