@@ -55,6 +55,7 @@ import com.moez.QKSMS.data.ContactList;
 import com.moez.QKSMS.data.Conversation;
 import com.moez.QKSMS.data.ConversationLegacy;
 import com.moez.QKSMS.data.Message;
+import com.moez.QKSMS.data.UWDataOffloadHelper;
 import com.moez.QKSMS.enums.QKPreference;
 import com.moez.QKSMS.interfaces.ActivityLauncher;
 import com.moez.QKSMS.transaction.NotificationManager;
@@ -494,6 +495,7 @@ public class MessageListFragment extends QKFragment implements ActivityLauncher,
             case R.id.menu_delete_conversation:
                 DialogHelper.showDeleteConversationDialog(mContext, mThreadId);
                 return true;
+
         }
         return super.onOptionsItemSelected(item);
     }

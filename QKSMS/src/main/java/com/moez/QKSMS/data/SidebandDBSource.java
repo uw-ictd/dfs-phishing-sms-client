@@ -23,15 +23,20 @@ public class SidebandDBSource {
         dbHelper = new MessageSidebandDBHelper(context);
     }
 
-    public void open() throws SQLException {
+    public void openWrite() throws SQLException {
         database = dbHelper.getWritableDatabase();
     }
+
+    public void openRead() throws SQLException {
+        database = dbHelper.getReadableDatabase();
+    }
+
 
     public void close() {
         dbHelper.close();
     }
 
-    public Boolean createNewMessageSidebandDBEntry(long messagedb_id, String extra_info) {
+    public Boolean createNewMessageSidebandDBEntry(String messagedb_id, String extra_info) {
         ContentValues values = new ContentValues();
         values.put(MessageSidebandDBHelper.COLUMN_MESSAGEDB_ID, messagedb_id);
         values.put(MessageSidebandDBHelper.COLUMN_EXTRAINFO, extra_info);

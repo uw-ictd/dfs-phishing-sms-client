@@ -24,7 +24,7 @@ import org.mistergroup.muzutozvednout.ShouldIAnswerBinder;
 
 //UW ADD
 import com.moez.QKSMS.data.MessageSidebandDBHelper;
-
+import com.moez.QKSMS.data.SidebandDBSource;
 
 public class MessagingReceiver extends BroadcastReceiver {
     private final String TAG = "MessagingReceiver";
@@ -33,7 +33,7 @@ public class MessagingReceiver extends BroadcastReceiver {
     private SharedPreferences mPrefs;
 
     //UW ADD
-    private SQLiteDatabase sideDb;
+    private SidebandDBSource sideDb;
     private MessageSidebandDBHelper mDbHelper;
 
     private String mAddress;
@@ -110,18 +110,12 @@ public class MessagingReceiver extends BroadcastReceiver {
         mUri = SmsHelper.addMessageToInbox(mContext, mAddress, mBody, mDate);
 
         if(sideDb == null) {
-            if (mDbHelper == null) {
-                mDbHelper = new MessageSidebandDBHelper(mContext);
-            }
-            sideDb = mDbHelper.getWritableDatabase();
+            sideDb = new SidebandDBSource(mContext);
         }
 
-        ContentValues vals = new ContentValues();
-        vals.put(mDbHelper.COLUMN_MESSAGEDB_ID, mUri.toString());
-        vals.put(mDbHelper.COLUMN_EXTRAINFO,"Extra Stuff");
-
-        long newRowId = sideDb.insert(mDbHelper.TABLE_NAME_SIDEBANDDB, null, vals);
-
+        sideDb.openWrite();
+        sideDb.createNewMessageSidebandDBEntry(mUri.toString(), "Extra Stuff");
+        sideDb.close();
 
         Message message = new Message(mContext, mUri);
         ConversationPrefsHelper conversationPrefs = new ConversationPrefsHelper(mContext, message.getThreadId());

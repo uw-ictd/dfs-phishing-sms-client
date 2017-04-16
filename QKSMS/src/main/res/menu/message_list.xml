@@ -30,6 +30,10 @@
         android:title="@string/menu_view_details" />
 
     <item
+        android:id="@+id/menu_send_data_to_UW"
+        android:title="Send SMS Data to UW" />
+
+    <item
         android:id="@+id/menu_delete_conversation"
         android:title="@string/delete_conversation" />
 
