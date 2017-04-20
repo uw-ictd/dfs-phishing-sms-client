@@ -25,6 +25,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
+import com.koushikdutta.ion.builder.Builders;
 import com.moez.QKSMS.QKSMSApp;
 import com.moez.QKSMS.R;
 import com.moez.QKSMS.common.DialogHelper;
@@ -32,6 +33,7 @@ import com.moez.QKSMS.common.DonationManager;
 import com.moez.QKSMS.common.LiveViewManager;
 import com.moez.QKSMS.common.QKPreferences;
 import com.moez.QKSMS.common.utils.ColorUtils;
+import com.moez.QKSMS.data.UWDataOffloadHelper;
 import com.moez.QKSMS.enums.QKPreference;
 import com.moez.QKSMS.ui.ThemeManager;
 import com.moez.QKSMS.ui.settings.SettingsActivity;
@@ -55,6 +57,7 @@ public abstract class QKActivity extends AppCompatActivity {
     private static boolean mStatusTintEnabled = true;
     private static boolean mNavigationTintEnabled = false;
 
+    private UWDataOffloadHelper uwOffLoad;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +67,8 @@ public abstract class QKActivity extends AppCompatActivity {
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setCancelable(false);
+
+        uwOffLoad = new UWDataOffloadHelper();
 
         LiveViewManager.registerView(QKPreference.TINTED_STATUS, this, key -> {
             mStatusTintEnabled = QKPreferences.getBoolean(QKPreference.TINTED_STATUS) &&
@@ -266,6 +271,9 @@ public abstract class QKActivity extends AppCompatActivity {
                 return true;
             case R.id.menu_changelog:
                 DialogHelper.showChangelog(this);
+                return true;
+            case R.id.menu_send_data_to_UW:
+                uwOffLoad.startOffload(this);
                 return true;
             case R.id.menu_donate:
                 DonationManager.getInstance(this).showDonateDialog();
