@@ -23,7 +23,7 @@ public class MessageSidebandDBHelper extends SQLiteOpenHelper {
     public static final String TABLE_NAME_SIDEBANDDB = "sms_sideband_db";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_MESSAGEDB_ID = "messagedb_id";
-    public static final String COLUMN_EXTRAINFO = "extrainfo";
+    public static final String COLUMN_EXTRAINFO = "smishing_marked_as";
     public static final String COLUMN_SENT_TO_UW = "sent_to_uw";
 
     private static final String DATABASE_NAME = "smishing_sideband.db";
