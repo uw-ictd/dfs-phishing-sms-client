@@ -27,7 +27,7 @@ public class MessageSidebandDBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_SENT_TO_UW = "sent_to_uw";
 
     private static final String DATABASE_NAME = "smishing_sideband.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static final String DATABASE_CREATE =
             "CREATE TABLE " + TABLE_NAME_SIDEBANDDB + " (" +
