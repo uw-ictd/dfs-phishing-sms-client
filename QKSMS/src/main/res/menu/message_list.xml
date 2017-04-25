@@ -4,6 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_uw_convo_private"
+        android:icon="@drawable/ic_visibility_off"
+        android:title="@string/menu_uw_convo_private"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_call"
         android:icon="@drawable/ic_call"
         android:title="@string/menu_call"

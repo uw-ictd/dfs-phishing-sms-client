@@ -468,6 +468,12 @@ public class MessageListFragment extends QKFragment implements ActivityLauncher,
                 makeCall();
                 return true;
 
+            case R.id.menu_uw_convo_private:
+                boolean conversationPrivate = mConversationPrefs.getUWConversationPrivateEnabled();
+                mConversationPrefs.putBoolean(SettingsFragment.UW_CONVO_PRIVATE, !conversationPrivate);
+                mContext.invalidateOptionsMenu();
+                return true;
+
             case R.id.menu_notifications:
                 boolean notificationMuted = mConversationPrefs.getNotificationsEnabled();
                 mConversationPrefs.putBoolean(SettingsFragment.NOTIFICATIONS, !notificationMuted);
@@ -609,6 +615,11 @@ public class MessageListFragment extends QKFragment implements ActivityLauncher,
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+
+        menu.findItem(R.id.menu_uw_convo_private).setTitle(mConversationPrefs.getUWConversationPrivateEnabled() ?
+                R.string.menu_uw_convo_private : R.string.menu_uw_convo_private_off);
+        menu.findItem(R.id.menu_uw_convo_private).setIcon(mConversationPrefs.getUWConversationPrivateEnabled() ?
+                R.drawable.ic_visibility_off : R.drawable.ic_visibility);
 
         menu.findItem(R.id.menu_notifications).setTitle(mConversationPrefs.getNotificationsEnabled() ?
                 R.string.menu_notifications : R.string.menu_notifications_off);

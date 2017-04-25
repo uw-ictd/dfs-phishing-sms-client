@@ -236,6 +236,9 @@
     <string name="pref_dimiss_read">Mark as read</string>
     <string name="pref_dismiss_read_summary">Mark message as read when notification is cleared</string>
 
+    <string name="pref_uw_convo_private">Make Converstation Private</string>
+    <string name="pref_uw_convo_private_summary">This will stop the application from sending this conversation back to the UW for logging</string>
+
     <string name="pref_delayed">Delayed messaging</string>
     <string name="pref_delayed_summary">Wait before sending your messages, so you have a chance to review them</string>
     <string name="pref_delayed_duration">Delay length (seconds)</string>
@@ -676,6 +679,8 @@
     <string name="menu_unblocked_conversations">Messages (%s new)</string>
     <string name="menu_notifications">Notifications</string>
     <string name="menu_notifications_off">Notifications off</string>
+    <string name="menu_uw_convo_private">Private</string>
+    <string name="menu_uw_convo_private_off">Private Off</string>
     <string name="menu_notification_settings">Conversation settings</string>
     <string name="menu_view_details">View details</string>
     <string name="menu_mark_read">Mark read</string>

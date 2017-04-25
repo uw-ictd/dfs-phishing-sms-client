@@ -76,6 +76,7 @@ public enum QKPreference {
     NOTIFICATIONS_SOUND("pref_key_ringtone", "content://settings/system/notification_sound"),
     NOTIFICATIONS_CALL_BUTTON("pref_key_notification_call", false),
     NOTIFICATIONS_MARK_READ("pref_key_dismiss_read", false),
+    NOTIFICATIONS_UW_CONVO_PRIVATE("pref_key_uw_convo_private", false),
 
     // MMS
     GROUP_MESSAGING("pref_key_compose_group", true),

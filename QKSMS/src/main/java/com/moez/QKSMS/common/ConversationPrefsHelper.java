@@ -34,6 +34,10 @@ public class ConversationPrefsHelper {
         return getBoolean(SettingsFragment.NOTIFICATION_LED, true);
     }
 
+    public boolean getUWConversationPrivateEnabled() {
+        return getBoolean(SettingsFragment.UW_CONVO_PRIVATE, false);
+    }
+
     public String getNotificationLedColor() {
         return getString(SettingsFragment.NOTIFICATION_LED_COLOR, "" + mContext.getResources().getColor(R.color.red_light));
     }

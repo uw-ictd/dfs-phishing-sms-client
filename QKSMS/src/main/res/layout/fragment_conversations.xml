@@ -38,7 +38,7 @@
         android:orientation="vertical"
         android:padding="8dp"
         android:clickable="true"
-        android:text="@+id/recording"
+        android:text="@string/recording"
         android:onClick="startTutorialSlides">
 
 

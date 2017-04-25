@@ -81,6 +81,10 @@ public class ConversationSettingsDialog extends QKDialog implements Preference.O
         list.addView(new QKSwitchPreference(getActivity(), this, SettingsFragment.NOTIFICATION_LED,
                 mConversationPrefs.getConversationPrefs(), mConversationPrefs.getNotificationLedEnabled(), R.string.pref_led, 0).getView());
 
+        //UW ADD
+        list.addView(new QKSwitchPreference(getActivity(), this, SettingsFragment.UW_CONVO_PRIVATE,
+                mConversationPrefs.getConversationPrefs(), mConversationPrefs.getWakePhoneEnabled(), R.string.pref_uw_convo_private, R.string.pref_uw_convo_private_summary).getView());
+
         list.addView(new QKPreference(getActivity(), this, SettingsFragment.NOTIFICATION_LED_COLOR,
                 R.string.pref_theme_led, 0).getView());
 

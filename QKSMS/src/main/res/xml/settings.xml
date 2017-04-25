@@ -105,6 +105,9 @@
         android:key="pref_key_theme_led" />
     <Preference
         android:defaultValue="false"
+        android:key="pref_uw_convo_private" />
+    <Preference
+        android:defaultValue="false"
         android:key="pref_key_wake" />
     <Preference
         android:defaultValue="true"
