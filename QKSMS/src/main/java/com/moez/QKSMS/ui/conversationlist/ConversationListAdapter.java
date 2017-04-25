@@ -1,5 +1,6 @@
 package com.moez.QKSMS.ui.conversationlist;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.moez.QKSMS.data.Contact;
 import com.moez.QKSMS.data.Conversation;
 import com.moez.QKSMS.enums.QKPreference;
 import com.moez.QKSMS.ui.ThemeManager;
+import com.moez.QKSMS.ui.TutorialSlidePagerActiviy;
 import com.moez.QKSMS.ui.base.QKActivity;
 import com.moez.QKSMS.ui.base.RecyclerCursorAdapter;
 import com.moez.QKSMS.ui.settings.SettingsFragment;
@@ -33,6 +35,8 @@ public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationL
         mCursor.moveToPosition(position);
         return Conversation.from(mContext, mCursor);
     }
+
+
 
     @Override
     public ConversationListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -136,4 +140,11 @@ public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationL
         // Update the avatar and name
         holder.onUpdate(conversation.getRecipients().size() == 1 ? conversation.getRecipients().get(0) : null);
     }
+
+//    public void startSlideShow(View view) {
+//        Intent intent = new Intent(this, TutorialSlidePagerActiviy.class);
+//        startActivity(intent);
+//    }
+
+
 }

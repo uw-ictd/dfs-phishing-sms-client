@@ -2,11 +2,13 @@
 <resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <!--Strings added for DFS-->
     <!--String shown on first tutorial slide -->
+    <string name="recording">recording</string>
     <string name="tutorial_1">This is how you use our app.</string>
     <!--String shown on first tutorial slide -->
     <string name="tutorial_2">This is how you use our app (with some details).</string>
     <!--String shown on first tutorial slide -->
     <string name="tutorial_3">This is how you use our app (with some extra details).</string>
+    <!--Done Strings added for DFS-->
 
     <!--Slogan-->
     <string name="slogan">Love texting again.</string>

@@ -1,5 +1,6 @@
 package com.moez.QKSMS.ui.conversationlist;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.text.Spannable;
@@ -12,6 +13,7 @@ import com.moez.QKSMS.data.Contact;
 import com.moez.QKSMS.data.Conversation;
 import com.moez.QKSMS.data.ConversationLegacy;
 import com.moez.QKSMS.ui.ThemeManager;
+import com.moez.QKSMS.ui.TutorialSlidePagerActiviy;
 import com.moez.QKSMS.ui.base.ClickyViewHolder;
 import com.moez.QKSMS.ui.base.QKActivity;
 import com.moez.QKSMS.ui.settings.SettingsFragment;
@@ -29,6 +31,7 @@ public class ConversationListViewHolder extends ClickyViewHolder<Conversation> i
     protected ImageView mutedView;
     protected ImageView unreadView;
     protected ImageView errorIndicator;
+
     protected ImageView taggedFraudIndicator;
     protected ImageView taggedUnkownIndicator;
     protected ImageView taggedSpamIndicator;
@@ -99,6 +102,11 @@ public class ConversationListViewHolder extends ClickyViewHolder<Conversation> i
             });
         }
     }
+//
+//    public void startSlideShow(View view) {
+//        Intent intent = new Intent(this, TutorialSlidePagerActiviy.class);
+//        startActivity(intent);
+//    }
 
     private CharSequence formatMessage(Conversation conversation, ConversationLegacy conversationLegacy) {
         String from = conversation.getRecipients().formatNames(", ");

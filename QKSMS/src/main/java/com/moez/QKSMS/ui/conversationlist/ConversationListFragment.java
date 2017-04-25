@@ -38,6 +38,7 @@ import com.moez.QKSMS.data.ConversationLegacy;
 import com.moez.QKSMS.enums.QKPreference;
 import com.moez.QKSMS.transaction.SmsHelper;
 import com.moez.QKSMS.ui.MainActivity;
+import com.moez.QKSMS.ui.ScreenSlidePageFragmentOne;
 import com.moez.QKSMS.ui.ThemeManager;
 import com.moez.QKSMS.ui.TutorialSlidePagerActiviy;
 import com.moez.QKSMS.ui.base.QKFragment;
@@ -248,18 +249,45 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
                 initLoaderManager();
                 return true;
 
-            // TODO Add functionality to following four cases:
+            // TODO Add functionality to following eight (redundancy is to allow  both icon and text menu options) cases:
+            case R.id.menu_mark_fraud_text:
+                System.out.println("fraud");
+                return true;
+
+
+            case R.id.menu_mark_spam_text:
+                System.out.println("spam");
+                return true;
+
+
+            case R.id.menu_mark_check_text:
+                System.out.println("check");
+                return true;
+
+
+            case R.id.menu_mark_unkown_text:
+                System.out.println("unkown");
+                return true;
+
             case R.id.menu_mark_fraud:
                 System.out.println("fraud");
+                return true;
+
 
             case R.id.menu_mark_spam:
                 System.out.println("spam");
+                return true;
+
 
             case R.id.menu_mark_check:
                 System.out.println("check");
+                return true;
+
 
             case R.id.menu_mark_unkown:
                 System.out.println("unkown");
+                return true;
+
 
 
             case R.id.menu_delete_failed:
@@ -393,6 +421,11 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
     public void update(Observable observable, Object data) {
         initLoaderManager();
     }
+
+//    public void startSlideShow(View view) {
+//        Intent intent = new Intent(this, TutorialSlidePagerActiviy.class);
+//        startActivity(intent);
+//    }
 
 
 }

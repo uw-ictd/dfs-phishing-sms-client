@@ -43,6 +43,34 @@ android:title="mark as unkown"
 android:visible="true"
 app:showAsAction="always" />
 
+<item
+    android:id="@+id/menu_mark_fraud_text"
+    android:icon="@drawable/ic_mark_fraud"
+    android:title="mark as fraud"
+    android:visible="true"
+    app:showAsAction="never" />
+
+<item
+    android:id="@+id/menu_mark_spam_text"
+    android:icon="@drawable/ic_mark_spam"
+    android:title="mark as spam"
+    android:visible="true"
+    app:showAsAction="never" />
+
+<item
+    android:id="@+id/menu_mark_check_text"
+    android:icon="@drawable/ic_mark_check"
+    android:title="mark as ok"
+    android:visible="true"
+    app:showAsAction="never" />
+
+<item
+    android:id="@+id/menu_mark_unkown_text"
+    android:icon="@drawable/ic_mark_unkown"
+    android:title="mark as unkown"
+    android:visible="true"
+    app:showAsAction="never" />
+
     <item
  android:id="@+id/menu_block"
  android:title="@string/menu_block_conversations" />
