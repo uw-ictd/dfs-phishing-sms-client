@@ -1,52 +1,26 @@
 package com.moez.QKSMS.data;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
-import com.google.gson.Gson;
-import com.moez.QKSMS.BuildConfig;
 import com.moez.QKSMS.R;
-import com.moez.QKSMS.data.Conversation;
-import com.moez.QKSMS.model.ChangeModel;
-import com.moez.QKSMS.transaction.SmsHelper;
-import com.moez.QKSMS.ui.MainActivity;
 import com.moez.QKSMS.ui.base.QKActivity;
-import com.moez.QKSMS.ui.dialog.DefaultSmsHelper;
 import com.moez.QKSMS.ui.dialog.QKDialog;
-import com.moez.QKSMS.ui.messagelist.MessageListActivity;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.io.PrintWriter;
-import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.util.*;
-import java.net.URI;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.content.ContentValues;
-import android.content.ContentResolver;
 import android.net.Uri;
-import com.google.gson.Gson;
 import android.telephony.TelephonyManager;
 import android.content.Context;
 import com.moez.QKSMS.data.MessageSidebandDBHelper;
 
 public class UWDataOffloadHelper {
 
-    public final String URL_TO_UW_SERVER = "http://areaarea.pythonanywhere.com/";
-    private final int CONNECTION_TIMEOUT = 1500;
-    private final int DATARETRIEVAL_TIMEOUT = 1500;
-    private int messages_sent;
-    //private final String smsCols = { ""};
-
-    private String UW_GET_UNSENT_RECORDS = MessageSidebandDBHelper.COLUMN_SENT_TO_UW + " = 0";
+    private String UW_GET_UNSENT_RECORDS = MessageSidebandDBHelper.COLUMN_SENT_TO_UW + " = '0'";
     private MessageSidebandDBHelper messageDB = null;
     private SQLiteDatabase myDb;
 
@@ -79,16 +53,12 @@ public class UWDataOffloadHelper {
 
                 StringRequest request = new StringRequest(Request.Method.POST,url, response -> {
 
-                    //TODO Bookkeeping
-                    new QKDialog()
-                            .setContext(context)
-                            .setTitle(response)
-                            .show();
-
-                    //add_message();
+                    //Update the flag for sent to make sure that it doesn't get sent again.
+                    SidebandDBSource sidebandDb = new SidebandDBSource(context.getApplicationContext());
+                    sidebandDb.setMessageSidebandDBEntryByArg(response, MessageSidebandDBHelper.COLUMN_SENT_TO_UW, "1");
 
                 }, error -> {
-                        context.makeToast(R.string.toast_changelog_error);
+                        //context.makeToast();
                 }){
                     @Override
                     protected Map<String,String> getParams() throws com.android.volley.AuthFailureError {
@@ -129,76 +99,11 @@ public class UWDataOffloadHelper {
                 context.getRequestQueue().add(request);
             } while(myCursor.moveToNext());
         }
-
         myCursor.close();
 
-
-
-       // new QKDialog()
-       //         .setContext(context)
-       //         .setTitle("There were " + messages_sent + " messages sent")
-       //         .show();
-
-    }
-
-    private void  add_message() {
-        messages_sent++;
-    }
-    //args passed are POST args
-    public String makeRequest(String args) {
-
-        HttpURLConnection urlConnection = null;
-        try {
-            // create connection
-            URL urlToRequest = new URL(URL_TO_UW_SERVER);
-            urlConnection = (HttpURLConnection) urlToRequest.openConnection();
-            urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
-            urlConnection.setReadTimeout(DATARETRIEVAL_TIMEOUT);
-
-            // handle POST parameters
-            if (args != null) {
-
-                urlConnection.setDoOutput(true);
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setFixedLengthStreamingMode(
-                        args.getBytes().length);
-                urlConnection.setRequestProperty("Content-Type",
-                        "application/x-www-form-urlencoded");
-
-                //send the POST out
-                PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
-                out.print(args);
-                out.close();
-            }
-
-            // handle issues
-           // int statusCode = urlConnection.getResponseCode();
-           // if (statusCode != HttpURLConnection.HTTP_OK) {
-                // throw some exception
-           // }
-
-            // read output (only for GET)
-            if (args != null) {
-                return null;
-            } else {
-                InputStream in =
-                        new BufferedInputStream(urlConnection.getInputStream());
-                return in.toString();
-            }
-
-
-        } catch (MalformedURLException e) {
-            // handle invalid URL
-        } catch (SocketTimeoutException e) {
-            // hadle timeout
-        } catch (IOException e) {
-            // handle I/0
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-        }
-
-        return null;
+        new QKDialog()
+                .setContext(context)
+                .setTitle("Message Sync Complete")
+                .show();
     }
 }

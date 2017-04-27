@@ -23,7 +23,6 @@ import com.moez.QKSMS.ui.settings.SettingsFragment;
 import org.mistergroup.muzutozvednout.ShouldIAnswerBinder;
 
 //UW ADD
-import com.moez.QKSMS.data.MessageSidebandDBHelper;
 import com.moez.QKSMS.data.SidebandDBSource;
 
 public class MessagingReceiver extends BroadcastReceiver {
@@ -34,7 +33,6 @@ public class MessagingReceiver extends BroadcastReceiver {
 
     //UW ADD
     private SidebandDBSource sideDb;
-    private MessageSidebandDBHelper mDbHelper;
 
     private String mAddress;
     private String mBody;
@@ -113,9 +111,7 @@ public class MessagingReceiver extends BroadcastReceiver {
             sideDb = new SidebandDBSource(mContext);
         }
 
-        sideDb.openWrite();
-        sideDb.createNewMessageSidebandDBEntry(mUri.toString(), "Extra Stuff");
-        sideDb.close();
+        sideDb.createNewMessageSidebandDBEntry(mUri.toString(), "");
 
         Message message = new Message(mContext, mUri);
         ConversationPrefsHelper conversationPrefs = new ConversationPrefsHelper(mContext, message.getThreadId());

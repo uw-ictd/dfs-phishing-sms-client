@@ -1,7 +1,5 @@
 package com.moez.QKSMS.data;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -40,52 +38,53 @@ public class SidebandDBSource {
         ContentValues values = new ContentValues();
         values.put(MessageSidebandDBHelper.COLUMN_MESSAGEDB_ID, messagedb_id);
         values.put(MessageSidebandDBHelper.COLUMN_EXTRAINFO, extra_info);
+        openWrite();
         long insertId = database.insert(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB, null, values);
         Cursor cursor = database.query(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB,
                 allColumns, MessageSidebandDBHelper.COLUMN_ID + " = " + insertId, null,
                 null, null, null);
         cursor.moveToFirst();
         cursor.close();
+        close();
         return true;
     }
 
-    public long getMessageSidebandDBEntrySentToUW(long messagedb_id) {
+    public String getMessageSidebandDBEntryByArg(String messagedb_id, String field) {
 
-        ContentValues values = new ContentValues();
-        values.put(MessageSidebandDBHelper.COLUMN_SENT_TO_UW,1);
-        int returnval = database.update(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB,
-                values, MessageSidebandDBHelper.COLUMN_MESSAGEDB_ID + " = " + messagedb_id, null);
+        String [] columns = { field };
+        String [] sqlArgs = { messagedb_id};
+        String returnval = "";
 
+        openRead();
+        Cursor cursor = database.query(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB,
+                            columns  , MessageSidebandDBHelper.COLUMN_MESSAGEDB_ID + "=?",
+                            sqlArgs,null,null,null);
+        if (cursor.moveToFirst()) {
+            returnval = cursor.getString(cursor.getColumnIndex(field));
+        }
+        cursor.close();
+        close();
         return returnval;
 
     }
-    // Set the sent_to_uw flag in db
-    public Boolean setMessageSidebandDBEntrySentToUW(long messagedb_id) {
 
-        ContentValues values = new ContentValues();
-        values.put(MessageSidebandDBHelper.COLUMN_SENT_TO_UW,1);
-        int returnval = database.update(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB,
-                values, MessageSidebandDBHelper.COLUMN_MESSAGEDB_ID + " = " + messagedb_id, null);
+    public int setMessageSidebandDBEntryByArg(String messagedb_id, String field, String newVal) {
 
-        if(returnval == 1)
-            return true;
+        ContentValues dataToUpdate = new ContentValues();
+        dataToUpdate.put(field,newVal);
+        String where = MessageSidebandDBHelper.COLUMN_MESSAGEDB_ID + "=?";
+        String [] whereArgs = { messagedb_id};
+        int returnval = -1;
 
-        return false;
+        openWrite();
 
-    }
+        returnval += database.update(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB,
+                     dataToUpdate, where, whereArgs);
 
-    // Clear the sent_to-_uw flag in db
-    public Boolean clearMessageSidebandDBEntrySentToUW(long messagedb_id) {
-
-        ContentValues values = new ContentValues();
-        values.put(MessageSidebandDBHelper.COLUMN_SENT_TO_UW,0);
-        int returnval = database.update(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB,
-                values, MessageSidebandDBHelper.COLUMN_MESSAGEDB_ID + " = " + messagedb_id, null);
-
-        if(returnval == 1)
-            return true;
-
-        return false;
+        close();
+        return returnval;
 
     }
+
+
 }
