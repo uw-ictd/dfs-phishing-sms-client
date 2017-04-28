@@ -20,7 +20,7 @@ import com.moez.QKSMS.data.MessageSidebandDBHelper;
 
 public class UWDataOffloadHelper {
 
-    private String UW_GET_UNSENT_RECORDS = MessageSidebandDBHelper.COLUMN_SENT_TO_UW + " = '0'";
+    private String UW_GET_UNSENT_RECORDS = MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW + " = '0'";
     private MessageSidebandDBHelper messageDB = null;
     private SQLiteDatabase myDb;
 
@@ -30,7 +30,8 @@ public class UWDataOffloadHelper {
             messageDB = new MessageSidebandDBHelper(context.getApplicationContext());
         }
 
-        String url = "http://areaarea.pythonanywhere.com/add/";
+        String url_add = "http://areaarea.pythonanywhere.com/add/";
+        String url_kill = "http://areaarea.pythonanywhere.com/kill/";
 
         myDb = messageDB.getReadableDatabase();
         Cursor myCursor = myDb.query(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB, null, UW_GET_UNSENT_RECORDS,null,null,null,null );
@@ -45,17 +46,17 @@ public class UWDataOffloadHelper {
                 ContentValues tempVals = new ContentValues();
                 tempVals.put("user_phone_number", myPhoneNumber );
                 DatabaseUtils.cursorRowToContentValues(myCursor, tempVals);
-                Uri oneMessage = Uri.parse(myCursor.getString(myCursor.getColumnIndex(MessageSidebandDBHelper.COLUMN_MESSAGEDB_ID)));
+                Uri oneMessage = Uri.parse(myCursor.getString(myCursor.getColumnIndex(MessageSidebandDBHelper.SIDEBAND_COLUMN_MESSAGEDB_ID)));
                 Cursor smsCursor = smsResolver.query(oneMessage,null,null,null,null);
                 if(smsCursor.moveToFirst()) {
                     DatabaseUtils.cursorRowToContentValues(smsCursor,tempVals);
                 }
 
-                StringRequest request = new StringRequest(Request.Method.POST,url, response -> {
+                StringRequest request = new StringRequest(Request.Method.POST, url_add, response -> {
 
                     //Update the flag for sent to make sure that it doesn't get sent again.
                     SidebandDBSource sidebandDb = new SidebandDBSource(context.getApplicationContext());
-                    sidebandDb.setMessageSidebandDBEntryByArg(response, MessageSidebandDBHelper.COLUMN_SENT_TO_UW, "1");
+                    sidebandDb.setMessageSidebandDBEntryByArg(response, MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW, "1");
 
                 }, error -> {
                         //context.makeToast();
@@ -100,6 +101,41 @@ public class UWDataOffloadHelper {
             } while(myCursor.moveToNext());
         }
         myCursor.close();
+
+        Cursor killCursor = myDb.query(MessageSidebandDBHelper.TABLE_NAME_PRIVACYDB, null, null, null, null, null, null );
+        if(killCursor.moveToFirst()) {
+            do {
+                String addressee = killCursor.getString(killCursor.getColumnIndex(MessageSidebandDBHelper.PRIVACY_COLUMN_ADDRESSEE));
+
+                StringRequest request = new StringRequest(Request.Method.POST, url_kill, response -> {
+                    //Nothing to do on response...server sends num of items discarded, we don't need or care
+                    String i = response;
+                }, error -> {
+                    //context.makeToast();
+                }){
+                    @Override
+                    protected Map<String,String> getParams() throws com.android.volley.AuthFailureError {
+                        Map<String,String> params = new HashMap<String, String>();
+                        //Telephony input
+                        params.put("user_phone",myPhoneNumber);
+                        //get the addressee of the kill list item
+                        params.put("addressee",addressee);
+
+                        return params;
+                    }
+
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String,String> params = new HashMap<String, String>();
+                        params.put("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
+                        return params;
+                    }
+                };
+
+                context.getRequestQueue().add(request);
+            } while(killCursor.moveToNext());
+        }
+
 
         new QKDialog()
                 .setContext(context)

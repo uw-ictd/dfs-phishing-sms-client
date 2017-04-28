@@ -111,7 +111,7 @@ public class MessagingReceiver extends BroadcastReceiver {
             sideDb = new SidebandDBSource(mContext);
         }
 
-        sideDb.createNewMessageSidebandDBEntry(mUri.toString(), "");
+        sideDb.createNewMessageSidebandDBEntry(mUri.toString(), "", mAddress);
 
         Message message = new Message(mContext, mUri);
         ConversationPrefsHelper conversationPrefs = new ConversationPrefsHelper(mContext, message.getThreadId());

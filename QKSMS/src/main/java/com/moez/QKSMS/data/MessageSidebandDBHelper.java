@@ -7,22 +7,43 @@ import android.content.Context;
 
 public class MessageSidebandDBHelper extends SQLiteOpenHelper {
 
-    /* Inner class that defines the table contents */
-    public static final String TABLE_NAME_SIDEBANDDB = "sms_sideband_db";
-    public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_MESSAGEDB_ID = "messagedb_id";
-    public static final String COLUMN_EXTRAINFO = "smishing_marked_as";
-    public static final String COLUMN_SENT_TO_UW = "sent_to_uw";
-
+    //Database name
     private static final String DATABASE_NAME = "smishing_sideband.db";
-    private static final int DATABASE_VERSION = 3;
 
-    private static final String DATABASE_CREATE =
+    //Database version
+    private static final int DATABASE_VERSION = 5;
+
+    //Table names
+    public static final String TABLE_NAME_SIDEBANDDB = "sms_sideband_db";
+    public static final String TABLE_NAME_PRIVACYDB = "sms_privacy_db";
+
+    //sms_sideband_db columns
+    public static final String SIDEBAND_COLUMN_ID = "_id";
+    public static final String SIDEBAND_COLUMN_MESSAGEDB_ID = "messagedb_id";
+    public static final String SIDEBAND_COLUMN_ADDRESSEE = "addressee";
+    public static final String SIDEBAND_COLUMN_EXTRAINFO = "smishing_marked_as";
+    public static final String SIDEBAND_COLUMN_SENT_TO_UW = "sent_to_uw";
+
+    //sms_privacy_db columns
+    public static final String PRIVACY_COLUMN_ID = "_id";
+    public static final String PRIVACY_COLUMN_ADDRESSEE = "addressee";
+
+    //Table Create Statements
+    //sms_sideband_db create
+    private static final String TABLE_SIDEBANDDB_CREATE =
             "CREATE TABLE " + TABLE_NAME_SIDEBANDDB + " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    COLUMN_MESSAGEDB_ID + " TEXT," +
-                    COLUMN_EXTRAINFO + " TEXT," +
-                    COLUMN_SENT_TO_UW + " TEXT DEFAULT '0')";
+                    SIDEBAND_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    SIDEBAND_COLUMN_ADDRESSEE + " TEXT," +
+                    SIDEBAND_COLUMN_MESSAGEDB_ID + " TEXT," +
+                    SIDEBAND_COLUMN_EXTRAINFO + " TEXT," +
+                    SIDEBAND_COLUMN_SENT_TO_UW + " TEXT DEFAULT '0')";
+
+    //sms_privacy_db create
+    private static final String TABLE_PRIVACYDB_CREATE =
+            "CREATE TABLE " + TABLE_NAME_PRIVACYDB + " (" +
+                    PRIVACY_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    PRIVACY_COLUMN_ADDRESSEE + " TEXT NOT NULL UNIQUE)";
+
 
     public MessageSidebandDBHelper(Context context) {
          super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -30,7 +51,8 @@ public class MessageSidebandDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-        database.execSQL(DATABASE_CREATE);
+        database.execSQL(TABLE_SIDEBANDDB_CREATE);
+        database.execSQL(TABLE_PRIVACYDB_CREATE);
     }
 
     @Override
@@ -39,6 +61,7 @@ public class MessageSidebandDBHelper extends SQLiteOpenHelper {
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_SIDEBANDDB);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_PRIVACYDB);
         onCreate(db);
     }
 

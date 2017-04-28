@@ -83,6 +83,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+//UW add
+import com.moez.QKSMS.data.SidebandDBSource;
+
 import static android.R.attr.data;
 
 public class MessageListFragment extends QKFragment implements ActivityLauncher, SensorEventListener,
@@ -470,8 +473,19 @@ public class MessageListFragment extends QKFragment implements ActivityLauncher,
                 return true;
 
             case R.id.menu_uw_convo_private:
-                boolean conversationPrivate = mConversationPrefs.getUWConversationPrivateEnabled();
-                mConversationPrefs.putBoolean(SettingsFragment.UW_CONVO_PRIVATE, !conversationPrivate);
+                boolean conversationPrivate = !mConversationPrefs.getUWConversationPrivateEnabled();
+                mConversationPrefs.putBoolean(SettingsFragment.UW_CONVO_PRIVATE, conversationPrivate);
+                SidebandDBSource db = new SidebandDBSource(mContext);
+                String [] tempAddrs = mConversation.getRecipients().getNumbers(false);
+                if(conversationPrivate) {
+                    for (int i = 0; i < tempAddrs.length; i++) {
+                        db.setPrivacyDBEntry(tempAddrs[i]);
+                    }
+                } else {
+                    for (int i = 0; i < tempAddrs.length; i++) {
+                        db.clearPrivacyDBEntry(tempAddrs[i]);
+                    }
+                }
                 mContext.invalidateOptionsMenu();
                 return true;
 
