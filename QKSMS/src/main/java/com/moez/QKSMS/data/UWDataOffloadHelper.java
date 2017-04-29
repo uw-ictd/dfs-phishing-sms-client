@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.moez.QKSMS.R;
 import com.moez.QKSMS.ui.base.QKActivity;
@@ -20,7 +21,12 @@ import com.moez.QKSMS.data.MessageSidebandDBHelper;
 
 public class UWDataOffloadHelper {
 
-    private String UW_GET_UNSENT_RECORDS = MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW + " = '0'";
+    private static final String SERVER_PROTOCOL = "https://";
+    private static final String SERVER_DOMAIN = "prothean.cs.washington.edu/sms/";
+    private static final String SERVER_ADDRESS_ADD = SERVER_PROTOCOL + SERVER_DOMAIN + "add/";
+    private static final String SERVER_ADDRESS_KILL = SERVER_PROTOCOL + SERVER_DOMAIN + "kill/";
+
+    private static final String UW_GET_UNSENT_RECORDS = MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW + " = '0'";
     private MessageSidebandDBHelper messageDB = null;
     private SQLiteDatabase myDb;
 
@@ -29,9 +35,6 @@ public class UWDataOffloadHelper {
         if(messageDB == null) {
             messageDB = new MessageSidebandDBHelper(context.getApplicationContext());
         }
-
-        String url_add = "http://areaarea.pythonanywhere.com/add/";
-        String url_kill = "http://areaarea.pythonanywhere.com/kill/";
 
         myDb = messageDB.getReadableDatabase();
         Cursor myCursor = myDb.query(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB, null, UW_GET_UNSENT_RECORDS,null,null,null,null );
@@ -52,13 +55,14 @@ public class UWDataOffloadHelper {
                     DatabaseUtils.cursorRowToContentValues(smsCursor,tempVals);
                 }
 
-                StringRequest request = new StringRequest(Request.Method.POST, url_add, response -> {
+                StringRequest request = new StringRequest(Request.Method.POST, SERVER_ADDRESS_ADD, response -> {
 
                     //Update the flag for sent to make sure that it doesn't get sent again.
                     SidebandDBSource sidebandDb = new SidebandDBSource(context.getApplicationContext());
                     sidebandDb.setMessageSidebandDBEntryByArg(response, MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW, "1");
 
                 }, error -> {
+                    VolleyError i = error;
                         //context.makeToast();
                 }){
                     @Override
@@ -89,12 +93,12 @@ public class UWDataOffloadHelper {
                         return params;
                     }
 
-                    @Override
+                    /*@Override
                     public Map<String, String> getHeaders() throws AuthFailureError {
                         Map<String,String> params = new HashMap<String, String>();
                         params.put("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
                         return params;
-                    }
+                    }*/
                 };
 
                 context.getRequestQueue().add(request);
@@ -107,7 +111,7 @@ public class UWDataOffloadHelper {
             do {
                 String addressee = killCursor.getString(killCursor.getColumnIndex(MessageSidebandDBHelper.PRIVACY_COLUMN_ADDRESSEE));
 
-                StringRequest request = new StringRequest(Request.Method.POST, url_kill, response -> {
+                StringRequest request = new StringRequest(Request.Method.POST, SERVER_ADDRESS_KILL, response -> {
                     //Nothing to do on response...server sends num of items discarded, we don't need or care
                     String i = response;
                 }, error -> {

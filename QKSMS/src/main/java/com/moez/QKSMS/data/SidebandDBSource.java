@@ -13,6 +13,10 @@ public class SidebandDBSource {
     public static final String MESSAGE_SENT = "1";
     public static final String MESSAGE_UNSENT = "0";
 
+    public static final String UW_MESSAGE_IS_SPAM = "SPAM,";
+    public static final String UW_MESSAGE_IS_SCAM = "SCAM,";
+    public static final String UW_MESSAGE_IS_FRAUD = "FRAUD,";
+
     // Database fields
     private SQLiteDatabase database;
     private MessageSidebandDBHelper dbHelper;

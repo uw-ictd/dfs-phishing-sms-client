@@ -11,7 +11,7 @@ public class MessageSidebandDBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "smishing_sideband.db";
 
     //Database version
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 1;
 
     //Table names
     public static final String TABLE_NAME_SIDEBANDDB = "sms_sideband_db";
