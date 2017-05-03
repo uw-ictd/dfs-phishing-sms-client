@@ -1,6 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <!--Strings added for DFS-->
+
+    <string name="agreement">UNIVERSITY OF WASHINGTON
+CONSENT FORM
+
+SMS Phishing study
+
+Researchers:
+Sam Castle (Contact researcher), stcastle@cs.washington.edu
+Samia Ibtasam (Contact researcher), samiai@cs.washington.edu
+Fahad Pervaiz
+Shrirang Mare
+Richard Anderson (PI)
+Kurtis Heimerl (PI)
+
+Researchers’ statement
+
+This form is to request your participation in a research study. The purpose of this consent form is to provide you with all the necessary information that will help you decide whether you want to be a part of this study. Please read the form carefully.  If you have any questions about the purpose of this study, what participation would entail you to do, the possible risks and benefits, your rights as a volunteer, and anything else about the research or this form that is unclear, use the contact information at the end of this form to reach us. When we have answered all your questions, you can decide if you want to be in the study or not. This process is called “informed consent.” A copy of this form will be available in the study app for your record. You can also request a copy through email by providing your email address.
+
+PURPOSE OF THE STUDY
+The purpose of the study is to understand SMS-based fraud, and develop methods that can help mitigate fraud in digital financial services.
+
+STUDY PROCEDURES
+Participation involves using our SMS app as your default SMS app on your Android smartphone, and labelling the SMS you receive as spam, fraud, or good, i.e., SMS that are not spam or fraud (e.g., messages from family and friends). The tutorial in the app explains how to label SMS. To understand SMS-based fraud, we need to collect SMS logs, so by default all your SMS will be saved securely on our server.  You can mark an SMS as private in the app to prevent it from being saved on our server. You can mark an individual SMS, an SMS conversation, or a contact as private. Private SMS, which includes any SMS between you and private contacts, is not saved on our server.
+
+
+SOURCE OF FUNDING
+The study team at the University of Washington is receiving financial support from the Bill and Melinda Gates Foundation.
+
+RISKS, STRESS, OR DISCOMFORT
+There is the risk that as subject, you may feel an invasion of privacy or loss of confidentiality if information about you was accidentally disclosed outside the research.   
+
+We take precautions to keep your data secure on our servers and in transit, so that it does not get accidentally disclosed outside our team. You have the option to mark certain messages or conversations private, so they do not get recorded.
+
+If you consent to sharing data with other researchers, we will anonymize the data, by removing identifiable information, and also instruct the partners not to attempt to de-anonymize any data.
+
+PRIVACY
+The research app collects the following information.
+Phone number, so we can compensate you and contact you regarding this study, if we need to.
+Phone information, which includes phone model, phone OS, and phone IMEI number.
+SMS metadata, which includes send and receive time, sender and receiver numbers, additional SMS headers such as Reply Path, SMS center number, type of SMS/MMS, and any SMS flags set by the Android OS.
+SMS read time and your interactions with the research study app.
+Network information when you send or receive an SMS, which includes cellular network in use, cell tower ID, and roaming status.
+Location where a SMS was sent or received.
+SMS label that you assign.
+
+To study SMS-based fraud we need SMS logs, so the app will collect your SMS, including the ones that you delete and store them securely on our server. The app, however, does not save any SMS that you mark as private. You can mark an SMS, an SMS conversation, or a contact as private.
+
+The information is sent to our servers over a secure channel (HTTPS) and is stored securely on our servers. All the data is stored securely on our server and accessible only to the research team. In the app, you can see which of your SMS are saved on our server and request certain or all SMS to be removed from our server. Our study and data handling protocols have been approved by the University of Washington Institutional Review Board.
+
+
+CONFIDENTIALITY OF RESEARCH INFORMATION
+Government or university staff sometimes review studies such as this one to make sure they are being done safely and legally.  If a review of this study takes place, your records may be examined.  The reviewers will protect your privacy.  The study records will not be used to put you at legal risk of harm.
+
+
+COMPENSATION
+You may refuse to participate and you are free to withdraw from this study at any time without penalty or loss of benefits to which you are otherwise entitled.
+Once you enroll in the study, you will receive 0.10 USD for completing a brief survey available in the app.
+For each SMS that you label, you will receive 0.01 USD, and for each week you continue to use our app you will receive 0.25 USD. When you accrue one USD, we will credit it to your mobile account as an airtime top-up.
+If you decide to withdraw from the study, we will credit the amount you have accrued to your mobile account. When we receive enough data from you, we will no longer ask you to participate in the study and we will notify you regarding the end of your participation in the study.
+
+OTHER INFORMATION
+You may refuse to participate and you are free to withdraw from this study at any time without penalty or loss of benefits to which you are otherwise entitled.
+
+The app uses Wi-Fi network to upload data to our servers, but if Wi-Fi is not available the app will use your network data plan to upload the data.
+
+If you share your phone with others, please let inform them that the SMS on your phone are recorded, as part of this study.
+
+
+Subject’s statement
+This study has been explained to me.  I volunteer to take part in this research.  I have had a chance to ask questions.  If I have questions later about the research, or if I have been harmed by participating in this study, I can contact one of the researchers listed on the first page of this consent form.  If I have questions about my rights as a research subject, I can call the Human Subjects Division at +1-(206) 543-0098 or call collect at +1-(206) 221-5940. I will receive a copy of this consent form.
+
+
+CONSENT TO DATA SHARING
+With your permission, we hope to share the data we collect in this study with other researchers interested in SMS-based fraud. Sharing data with other researchers will help advance research on mitigation methods for SMS-based fraud. Before we share any data with others, we will anonymize the data to protect your privacy: we will hide your name, phone number, and your exact location.
+You can still participate in the study if you decide not to share your data with others.
+</string>
     <!--String shown on first tutorial slide -->
     <string name="recording">recording</string>
     <string name="tutorial_1">This is how you use our app.</string>

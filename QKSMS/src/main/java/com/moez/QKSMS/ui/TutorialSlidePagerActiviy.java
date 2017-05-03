@@ -16,7 +16,7 @@ import com.moez.QKSMS.R;
 
 public class TutorialSlidePagerActiviy extends FragmentActivity {
 
-    private static final int NUM_PAGES = 3;
+    private static final int NUM_PAGES = 1;
 
     /**
      * Pager widget, handles animation
@@ -63,13 +63,7 @@ public class TutorialSlidePagerActiviy extends FragmentActivity {
         @Override
         public Fragment getItem(int position) {
          switch(position) {
-             case 1:
-                 return new ScreenSlidePageFragmentOne();
-
-             case 2:
-                 return new ScreenSlidePageFragmentOne();
-
-             case 3:
+             case 0:
                  return new ScreenSlidePageFragmentOne();
              default:
                  return null;

@@ -10,6 +10,12 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/menu_uw_convo_private_text"
+        android:text="toggle private"
+        android:title="@string/menu_uw_convo_private"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_call"
         android:icon="@drawable/ic_call"
         android:title="@string/menu_call"

@@ -10,7 +10,9 @@ public class WelcomePagerAdapter extends FragmentPagerAdapter {
 
     private Fragment[] mFragments = new Fragment[3];
 
+
     public final int PAGE_INTRO = 0;
+   // public final int PAGE_AGGREEMENT = 3;
     public final int PAGE_THEME = 1;
     public final int PAGE_NIGHT = 2;
 
@@ -25,6 +27,8 @@ public class WelcomePagerAdapter extends FragmentPagerAdapter {
                 case PAGE_INTRO:
                     mFragments[i] = new WelcomeIntroFragment();
                     break;
+               // case PAGE_AGGREEMENT:
+               //     mFragments[i] = new WelcomeAgreementFragment();
                 case PAGE_THEME:
                     mFragments[i] = new WelcomeThemeFragment();
                     break;

@@ -3,7 +3,6 @@ package com.moez.QKSMS.ui.conversationlist;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -18,10 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -35,10 +31,11 @@ import com.moez.QKSMS.common.utils.ColorUtils;
 import com.moez.QKSMS.data.Contact;
 import com.moez.QKSMS.data.Conversation;
 import com.moez.QKSMS.data.ConversationLegacy;
+import com.moez.QKSMS.data.MessageSidebandDBHelper;
+import com.moez.QKSMS.data.SidebandDBSource;
 import com.moez.QKSMS.enums.QKPreference;
 import com.moez.QKSMS.transaction.SmsHelper;
 import com.moez.QKSMS.ui.MainActivity;
-import com.moez.QKSMS.ui.ScreenSlidePageFragmentOne;
 import com.moez.QKSMS.ui.ThemeManager;
 import com.moez.QKSMS.ui.TutorialSlidePagerActiviy;
 import com.moez.QKSMS.ui.base.QKFragment;
@@ -47,10 +44,11 @@ import com.moez.QKSMS.ui.compose.ComposeActivity;
 import com.moez.QKSMS.ui.dialog.conversationdetails.ConversationDetailsDialog;
 import com.moez.QKSMS.ui.messagelist.MessageListActivity;
 import com.moez.QKSMS.ui.settings.SettingsFragment;
+import com.moez.QKSMS.ui.view.QKTextView;
+import com.moez.QKSMS.ui.welcome.WelcomeActivity;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.*;
 
 
 public class ConversationListFragment extends QKFragment implements LoaderManager.LoaderCallbacks<Cursor>,
@@ -62,9 +60,10 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
     @Bind(R.id.empty_state_icon) ImageView mEmptyStateIcon;
     @Bind(R.id.conversations_list) RecyclerView mRecyclerView;
     @Bind(R.id.fab) FloatingActionButton mFab;
+    @Bind(R.id.slides_start) FloatingActionButton mSlideStart;
+    @Bind(R.id.recording_text) QKTextView recording_text;
 
-    // change to Image view or Button
-    @Bind(R.id.slides_start) Button mSlideStart;
+    private SidebandDBSource sideDb;
 
     private ConversationListAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
@@ -91,10 +90,6 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
         mLayoutManager = new LinearLayoutManager(mContext);
         mConversationDetailsDialog = new ConversationDetailsDialog(mContext, getFragmentManager());
 
-//        mSlideStart = mContext.findViewById(R.id.slides_start);
-//        mSlideStart.setOnClickListener(v -> {
-//            mContext.startActivity(TutorialSlidePagerActiviy.class);
-//        });
 
         LiveViewManager.registerView(QKPreference.THEME, this, key -> {
             if (!mViewHasLoaded) {
@@ -105,7 +100,6 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
             mFab.setColorPressed(ColorUtils.lighten(ThemeManager.getColor()));
             mFab.getDrawable().setColorFilter(ThemeManager.getTextOnColorPrimary(), PorterDuff.Mode.SRC_ATOP);
 
-            mSlideStart.findViewById(R.id.slides_start);
 
 
             mEmptyStateIcon.setColorFilter(ThemeManager.getTextOnBackgroundPrimary());
@@ -123,10 +117,28 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
+
+
         mFab.setColorNormal(ThemeManager.getColor());
         mFab.setColorPressed(ColorUtils.lighten(ThemeManager.getColor()));
         mFab.attachToRecyclerView(mRecyclerView);
         mFab.setColorFilter(ThemeManager.getTextOnColorPrimary());
+
+        mSlideStart.setColorNormal(ThemeManager.getColor());
+        mSlideStart.setBackgroundColor(ThemeManager.getColor());
+        mSlideStart.setColorPressed(ColorUtils.lighten(ThemeManager.getColor()));
+        mSlideStart.attachToRecyclerView(mRecyclerView);
+        mSlideStart.setColorFilter(ThemeManager.getTextOnColorPrimary());
+
+        mSlideStart.attachToRecyclerView(mRecyclerView);
+        mSlideStart.setOnClickListener(v -> {
+            if (mAdapter.isInMultiSelectMode()) {
+                mAdapter.disableMultiSelectMode(true);
+            } else {
+                mContext.startActivity(TutorialSlidePagerActiviy.class);
+            }
+        });
+
         mFab.setOnClickListener(v -> {
             if (mAdapter.isInMultiSelectMode()) {
                 mAdapter.disableMultiSelectMode(true);
@@ -135,13 +147,6 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
             }
         });
 
-        mSlideStart.setOnClickListener(v -> {
-            /*
-            System.out.println("Made it");
-            Intent intent = new Intent(getActivity(), TutorialSlidePagerActiviy.class);
-            startActivity(intent); */
-            mContext.startActivity(TutorialSlidePagerActiviy.class);
-        });
 
         mViewHasLoaded = true;
 
@@ -250,45 +255,29 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
                 return true;
 
             // TODO Add functionality to following eight (redundancy is to allow  both icon and text menu options) cases:
-            case R.id.menu_mark_fraud_text:
-                System.out.println("fraud");
-                return true;
-
-
-            case R.id.menu_mark_spam_text:
-                System.out.println("spam");
-                return true;
-
-
-            case R.id.menu_mark_check_text:
-                System.out.println("check");
-                return true;
-
-
-            case R.id.menu_mark_unkown_text:
-                System.out.println("unkown");
-                return true;
-
             case R.id.menu_mark_fraud:
-                System.out.println("fraud");
+            case R.id.menu_mark_fraud_text:
+                mark_conversations(SidebandDBSource.UW_MESSAGE_IS_FRAUD);
+                initLoaderManager();
                 return true;
-
 
             case R.id.menu_mark_spam:
-                System.out.println("spam");
+            case R.id.menu_mark_spam_text:
+                mark_conversations(SidebandDBSource.UW_MESSAGE_IS_SPAM);
+                initLoaderManager();
                 return true;
-
 
             case R.id.menu_mark_check:
-                System.out.println("check");
+            case R.id.menu_mark_check_text:
+                mark_conversations(SidebandDBSource.UW_MESSAGE_IS_OK);
+                initLoaderManager();
                 return true;
-
 
             case R.id.menu_mark_unkown:
-                System.out.println("unkown");
+            case R.id.menu_mark_unkown_text:
+                mark_conversations(SidebandDBSource.UW_MESSAGE_IS_UNKOWN);
+                initLoaderManager();
                 return true;
-
-
 
             case R.id.menu_delete_failed:
                 DialogHelper.showDeleteFailedMessagesDialog((MainActivity) mContext, mAdapter.getSelectedItems().keySet());
@@ -339,7 +328,7 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
         return mLayoutManager.findFirstVisibleItemPosition();
     }
 
-    private void initLoaderManager() {
+    public void initLoaderManager() {
         getLoaderManager().restartLoader(QKSMSApp.LOADER_CONVERSATIONS, null, this);
     }
 
@@ -422,10 +411,16 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
         initLoaderManager();
     }
 
-//    public void startSlideShow(View view) {
-//        Intent intent = new Intent(this, TutorialSlidePagerActiviy.class);
-//        startActivity(intent);
-//    }
 
+    public void mark_conversations(String tag) {
+
+        if (sideDb == null) {
+            sideDb = new SidebandDBSource(mContext);
+        }
+        for (long threadId : mAdapter.getSelectedItems().keySet()) {
+            String addressee = (new ConversationLegacy(mContext, threadId)).getAddress();
+            sideDb.setConversationSidebandDBEntryByAddress(addressee, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO, tag);
+        }
+    }
 
 }

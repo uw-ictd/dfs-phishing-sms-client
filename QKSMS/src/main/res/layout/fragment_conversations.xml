@@ -30,19 +30,7 @@
             app:type="dialog_title" />
 
     </LinearLayout>
-    <Button
-        android:id="@+id/slides_start"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        android:padding="8dp"
-        android:clickable="true"
-        android:text="@string/recording"
-        android:onClick="startTutorialSlides">
 
-
-    </Button>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/conversations_list"
@@ -53,16 +41,38 @@
         android:divider="@null"
         android:paddingBottom="8sp"
         android:paddingTop="8sp"
-        android:scrollbarStyle="outsideOverlay" />
+        android:scrollbarStyle="outsideOverlay"
+        />
+
+    <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/slides_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:clickable="true"/>
+
+    <com.moez.QKSMS.ui.view.QKTextView
+        android:id="@+id/recording_text"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="@string/recording"
+        android:elevation="6dp"
+        android:textSize="18dp"
+        android:layout_alignParentBottom="true" />
+
 
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/fab"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/slides_start"
         android:layout_alignParentRight="true"
         android:layout_margin="16dp"
         android:src="@drawable/ic_add" />
+
 
 
 

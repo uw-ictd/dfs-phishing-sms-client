@@ -16,6 +16,8 @@ public class SidebandDBSource {
     public static final String UW_MESSAGE_IS_SPAM = "SPAM,";
     public static final String UW_MESSAGE_IS_SCAM = "SCAM,";
     public static final String UW_MESSAGE_IS_FRAUD = "FRAUD,";
+    public static final String UW_MESSAGE_IS_OK = "OK,";
+    public static final String UW_MESSAGE_IS_UNKOWN = "unkown,";
 
     // Database fields
     private SQLiteDatabase database;
@@ -70,6 +72,23 @@ public class SidebandDBSource {
         return true;
     }
 
+    public String getMessageSidebandDbEntryByAddress(String addressee, String field) {
+        String [] columns = { field };
+        String where = MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE + "=?";
+        String [] whereArgs = { addressee};
+        String returnval = "";
+
+        openRead();
+        Cursor cursor = database.query(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB,
+                columns, where, whereArgs, null, null, null);
+        if (cursor.moveToFirst()) {
+            returnval = cursor.getString(cursor.getColumnIndex(field));
+        }
+        cursor.close();
+        close();
+        return returnval;
+    }
+
     public String getMessageSidebandDBEntryByArg(String messagedb_id, String field) {
 
         String [] columns = { field };
@@ -87,6 +106,28 @@ public class SidebandDBSource {
         close();
         return returnval;
 
+    }
+
+    public int setConversationSidebandDBEntryByAddress(String addressee, String field, String newVal) {
+        addressee = stripChars(addressee);
+        ContentValues dataToUpdate = new ContentValues();
+        dataToUpdate.put(field,newVal);
+
+
+
+        String where = MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE + "=?";
+        String [] whereArgs = { stripChars(addressee)};
+
+
+        int returnval = -1;
+
+        openWrite();
+
+        returnval = database.update(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB,
+                dataToUpdate, where, whereArgs);
+
+        close();
+        return returnval;
     }
 
     public int setMessageSidebandDBEntryByArg(String messagedb_id, String field, String newVal) {
@@ -153,8 +194,20 @@ public class SidebandDBSource {
 
         openRead();
         myCursor = database.query(MessageSidebandDBHelper.TABLE_NAME_PRIVACYDB, columns, where, whereArgs, null, null, null);
+
+
         returnval = myCursor.moveToFirst();
         myCursor.close();
+        close();
+
+
+        Cursor myCursor1;
+        boolean returnval1;
+
+        openRead();
+        myCursor1 = database.rawQuery("Select * from " + MessageSidebandDBHelper.TABLE_NAME_PRIVACYDB,  null);
+        returnval1 = myCursor.moveToFirst();
+        myCursor1.close();
         close();
 
         return returnval;

@@ -472,6 +472,7 @@ public class MessageListFragment extends QKFragment implements ActivityLauncher,
                 makeCall();
                 return true;
 
+            case R.id.menu_uw_convo_private_text:
             case R.id.menu_uw_convo_private:
                 boolean conversationPrivate = !mConversationPrefs.getUWConversationPrivateEnabled();
                 mConversationPrefs.putBoolean(SettingsFragment.UW_CONVO_PRIVATE, conversationPrivate);
@@ -487,6 +488,7 @@ public class MessageListFragment extends QKFragment implements ActivityLauncher,
                     }
                 }
                 mContext.invalidateOptionsMenu();
+                mAdapter.disableMultiSelectMode(true);
                 return true;
 
             case R.id.menu_notifications:
@@ -636,6 +638,9 @@ public class MessageListFragment extends QKFragment implements ActivityLauncher,
                 R.string.menu_uw_convo_private : R.string.menu_uw_convo_private_off);
         menu.findItem(R.id.menu_uw_convo_private).setIcon(mConversationPrefs.getUWConversationPrivateEnabled() ?
                 R.drawable.ic_visibility_off : R.drawable.ic_visibility);
+
+        menu.findItem(R.id.menu_uw_convo_private_text).setTitle(mConversationPrefs.getUWConversationPrivateEnabled() ?
+                R.string.menu_uw_convo_private : R.string.menu_uw_convo_private_off);
 
         menu.findItem(R.id.menu_notifications).setTitle(mConversationPrefs.getNotificationsEnabled() ?
                 R.string.menu_notifications : R.string.menu_notifications_off);

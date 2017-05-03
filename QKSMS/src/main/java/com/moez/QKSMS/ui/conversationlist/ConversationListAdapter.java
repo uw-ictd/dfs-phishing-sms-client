@@ -14,17 +14,22 @@ import com.moez.QKSMS.common.emoji.EmojiRegistry;
 import com.moez.QKSMS.common.utils.DateFormatter;
 import com.moez.QKSMS.data.Contact;
 import com.moez.QKSMS.data.Conversation;
+import com.moez.QKSMS.data.ConversationLegacy;
+import com.moez.QKSMS.data.MessageSidebandDBHelper;
+import com.moez.QKSMS.data.SidebandDBSource;
 import com.moez.QKSMS.enums.QKPreference;
 import com.moez.QKSMS.ui.ThemeManager;
 import com.moez.QKSMS.ui.TutorialSlidePagerActiviy;
 import com.moez.QKSMS.ui.base.QKActivity;
 import com.moez.QKSMS.ui.base.RecyclerCursorAdapter;
 import com.moez.QKSMS.ui.settings.SettingsFragment;
+import com.moez.QKSMS.ui.welcome.WelcomeActivity;
 
 public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationListViewHolder, Conversation> {
 
 
     private final SharedPreferences mPrefs;
+    private SidebandDBSource sideDb;
 
     public ConversationListAdapter(QKActivity context) {
         super(context);
@@ -37,7 +42,6 @@ public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationL
     }
 
 
-
     @Override
     public ConversationListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -47,19 +51,15 @@ public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationL
         holder.mutedView.setImageResource(R.drawable.ic_notifications_muted);
         holder.unreadView.setImageResource(R.drawable.ic_unread_indicator);
         holder.errorIndicator.setImageResource(R.drawable.ic_error);
-        holder.taggedFraudIndicator.setImageResource(R.drawable.ic_mark_fraud);
-        holder.taggedUnkownIndicator.setImageResource(R.drawable.ic_mark_unkown);
-        holder.taggedSpamIndicator.setImageResource(R.drawable.ic_mark_spam);
-        holder.taggedCheckIndicator.setImageResource(R.drawable.ic_mark_check);
+        holder.tagIndicator.setImageResource(R.drawable.ic_mark_fraud);
+        holder.privacyIndicator.setImageResource(R.drawable.ic_visibility_off);
+
 
         LiveViewManager.registerView(QKPreference.THEME, this, key -> {
             holder.mutedView.setColorFilter(ThemeManager.getColor());
             holder.unreadView.setColorFilter(ThemeManager.getColor());
             holder.errorIndicator.setColorFilter(ThemeManager.getColor());
-            holder.taggedFraudIndicator.setColorFilter(ThemeManager.getColor());
-            holder.taggedUnkownIndicator.setColorFilter(ThemeManager.getColor());
-            holder.taggedSpamIndicator.setColorFilter(ThemeManager.getColor());
-            holder.taggedCheckIndicator.setColorFilter(ThemeManager.getColor());
+            holder.tagIndicator.setColorFilter(ThemeManager.getColor());
         });
 
         LiveViewManager.registerView(QKPreference.BACKGROUND, this, key -> {
@@ -85,7 +85,46 @@ public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationL
         holder.errorIndicator.setVisibility(conversation.hasError() ? View.VISIBLE : View.GONE);
 
         //TODO change
-        holder.taggedFraudIndicator.setVisibility(true ? View.VISIBLE : View.GONE);
+        if (sideDb == null) {
+            sideDb = new SidebandDBSource(mContext);
+        }
+        long threadId = conversation.getThreadId();
+        String address = (new ConversationLegacy(mContext, threadId)).getAddress();
+        String tag = sideDb.getMessageSidebandDbEntryByAddress(address, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO);
+
+        boolean setPrivate = sideDb.getAddresseeIsPrivate(address);
+        holder.tagIndicator.setVisibility(View.VISIBLE);
+        if (setPrivate) {
+
+            holder.privacyIndicator.setVisibility(View.VISIBLE);
+            holder.privacyIndicator.setColorFilter(ThemeManager.getColor());
+            holder.tagIndicator.setVisibility(View.INVISIBLE);
+        } else {
+            holder.privacyIndicator.setVisibility(View.INVISIBLE);
+            boolean hasTag = false;
+
+            if (tag.startsWith(SidebandDBSource.UW_MESSAGE_IS_FRAUD) || tag.contains(SidebandDBSource.UW_MESSAGE_IS_FRAUD)) {
+                holder.tagIndicator.setImageResource(R.drawable.ic_mark_fraud);
+                hasTag = true;
+            }
+            if (tag.startsWith(SidebandDBSource.UW_MESSAGE_IS_SPAM) || tag.contains(SidebandDBSource.UW_MESSAGE_IS_SPAM)) {
+                holder.tagIndicator.setImageResource(R.drawable.ic_mark_spam);
+                hasTag = true;
+            }
+
+            if (tag.startsWith(SidebandDBSource.UW_MESSAGE_IS_UNKOWN) || tag.contains(SidebandDBSource.UW_MESSAGE_IS_UNKOWN)) {
+                holder.tagIndicator.setImageResource(R.drawable.ic_mark_unkown);
+                hasTag = true;
+            }
+
+            if (tag.startsWith(SidebandDBSource.UW_MESSAGE_IS_OK) || tag.contains(SidebandDBSource.UW_MESSAGE_IS_OK)) {
+                holder.tagIndicator.setImageResource(R.drawable.ic_mark_check);
+                hasTag = true;
+            }
+            if (hasTag) {
+                holder.tagIndicator.setVisibility(View.VISIBLE);
+            }
+        }
 
         final boolean hasUnreadMessages = conversation.hasUnreadMessages();
         if (hasUnreadMessages) {
@@ -95,7 +134,7 @@ public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationL
             holder.fromView.setType(FontManager.TEXT_TYPE_PRIMARY_BOLD);
             holder.snippetView.setMaxLines(5);
         } else {
-            holder.unreadView.setVisibility(View.GONE);
+            holder.unreadView.setVisibility(View.INVISIBLE);
             holder.snippetView.setTextColor(ThemeManager.getTextOnBackgroundSecondary());
             holder.dateView.setTextColor(ThemeManager.getTextOnBackgroundSecondary());
             holder.fromView.setType(FontManager.TEXT_TYPE_PRIMARY);
@@ -105,6 +144,7 @@ public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationL
         LiveViewManager.registerView(QKPreference.THEME, this, key -> {
             holder.dateView.setTextColor(hasUnreadMessages ? ThemeManager.getColor() : ThemeManager.getTextOnBackgroundSecondary());
         });
+
 
         if (isInMultiSelectMode()) {
             holder.mSelected.setVisibility(View.VISIBLE);
@@ -140,11 +180,5 @@ public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationL
         // Update the avatar and name
         holder.onUpdate(conversation.getRecipients().size() == 1 ? conversation.getRecipients().get(0) : null);
     }
-
-//    public void startSlideShow(View view) {
-//        Intent intent = new Intent(this, TutorialSlidePagerActiviy.class);
-//        startActivity(intent);
-//    }
-
 
 }
