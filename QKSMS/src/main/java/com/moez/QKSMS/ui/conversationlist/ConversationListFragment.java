@@ -60,8 +60,8 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
     @Bind(R.id.empty_state_icon) ImageView mEmptyStateIcon;
     @Bind(R.id.conversations_list) RecyclerView mRecyclerView;
     @Bind(R.id.fab) FloatingActionButton mFab;
-    @Bind(R.id.slides_start) FloatingActionButton mSlideStart;
-    @Bind(R.id.recording_text) QKTextView recording_text;
+    //@Bind(R.id.slides_start) FloatingActionButton mSlideStart;
+    //@Bind(R.id.recording_text) QKTextView recording_text;
 
     private SidebandDBSource sideDb;
 
@@ -123,7 +123,7 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
         mFab.setColorPressed(ColorUtils.lighten(ThemeManager.getColor()));
         mFab.attachToRecyclerView(mRecyclerView);
         mFab.setColorFilter(ThemeManager.getTextOnColorPrimary());
-
+/*
         mSlideStart.setColorNormal(ThemeManager.getColor());
         mSlideStart.setBackgroundColor(ThemeManager.getColor());
         mSlideStart.setColorPressed(ColorUtils.lighten(ThemeManager.getColor()));
@@ -138,7 +138,7 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
                 mContext.startActivity(TutorialSlidePagerActiviy.class);
             }
         });
-
+*/
         mFab.setOnClickListener(v -> {
             if (mAdapter.isInMultiSelectMode()) {
                 mAdapter.disableMultiSelectMode(true);

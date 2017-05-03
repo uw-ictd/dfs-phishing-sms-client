@@ -93,7 +93,7 @@ public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationL
         String tag = sideDb.getMessageSidebandDbEntryByAddress(address, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO);
 
         boolean setPrivate = sideDb.getAddresseeIsPrivate(address);
-        holder.tagIndicator.setVisibility(View.VISIBLE);
+        holder.tagIndicator.setVisibility(View.INVISIBLE);
         if (setPrivate) {
 
             holder.privacyIndicator.setVisibility(View.VISIBLE);

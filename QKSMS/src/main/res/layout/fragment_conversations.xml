@@ -44,6 +44,7 @@
         android:scrollbarStyle="outsideOverlay"
         />
 
+    <!--
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/slides_start"
         android:layout_width="match_parent"
@@ -63,13 +64,17 @@
         android:textSize="18dp"
         android:layout_alignParentBottom="true" />
 
+        NOTE: when putting back record button, put:
+        android:layout_above="@id/slides_start"
+        in fab
 
+    -->
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/slides_start"
         android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
         android:src="@drawable/ic_add" />
 
