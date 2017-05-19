@@ -151,10 +151,10 @@ public class MainActivity extends QKActivity {
     }
 
     public void launchWelcomeActivity() {
-//        if (mPrefs.getBoolean(SettingsFragment.WELCOME_SEEN, false)) {
-//          // User has already seen the welcome screen
-//            return;
-//        }
+        if (mPrefs.getBoolean(SettingsFragment.WELCOME_SEEN, false)) {
+          // User has already seen the welcome screen
+            return;
+        }
 
         Intent welcomeIntent = new Intent(this, WelcomeActivity.class);
         startActivityForResult(welcomeIntent, WelcomeActivity.WELCOME_REQUEST_CODE);
