@@ -150,11 +150,11 @@ public class MainActivity extends QKActivity {
                 && savedInstanceState.getBoolean(KEY_MMS_SETUP_FRAGMENT_DISMISSED, false);
     }
 
-    private void launchWelcomeActivity() {
-        if (mPrefs.getBoolean(SettingsFragment.WELCOME_SEEN, false)) {
-            // User has already seen the welcome screen
-            return;
-        }
+    public void launchWelcomeActivity() {
+//        if (mPrefs.getBoolean(SettingsFragment.WELCOME_SEEN, false)) {
+//          // User has already seen the welcome screen
+//            return;
+//        }
 
         Intent welcomeIntent = new Intent(this, WelcomeActivity.class);
         startActivityForResult(welcomeIntent, WelcomeActivity.WELCOME_REQUEST_CODE);

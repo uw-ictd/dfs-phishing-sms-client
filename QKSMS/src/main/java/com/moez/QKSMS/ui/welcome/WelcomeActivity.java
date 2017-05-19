@@ -28,6 +28,7 @@ public class WelcomeActivity extends QKActivity implements ViewPager.OnPageChang
     private View mBackground;
     private RobotoTextView mSkip;
     private boolean mFinished;
+    private boolean mContinue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,11 @@ public class WelcomeActivity extends QKActivity implements ViewPager.OnPageChang
         mIndicators = new ImageView[]{
                 (ImageView) findViewById(R.id.welcome_indicator_0),
                 (ImageView) findViewById(R.id.welcome_indicator_1),
-                (ImageView) findViewById(R.id.welcome_indicator_2)};
+                (ImageView) findViewById(R.id.welcome_indicator_2),
+                (ImageView) findViewById(R.id.welcome_indicator_3),
+                (ImageView) findViewById(R.id.welcome_indicator_4),
+                (ImageView) findViewById(R.id.welcome_indicator_5),
+                (ImageView) findViewById(R.id.welcome_indicator_6)};
         tintIndicators(0xFFFFFFFF);
 
         mPager = (ViewPager) findViewById(R.id.welcome_pager);
@@ -89,12 +94,26 @@ public class WelcomeActivity extends QKActivity implements ViewPager.OnPageChang
         }
     }
 
-    public void setFinished() {
+    public void setSkip() {
         if (mSkip != null) {
+            mSkip.setText(R.string.welcome_skip);
+            mSkip.setVisibility(View.VISIBLE);
+        }
+    }
+    public void setFinished() {
+     /*   if (mSkip != null) {
             mFinished = true;
             mSkip.setText(R.string.welcome_finish);
             mSkip.setVisibility(View.VISIBLE);
-        }
+        } */
+    }
+
+    public void setContinue() {
+       /* if (mSkip != null) {
+            mContinue = true;
+            mSkip.setText(R.string.welcome_continue);
+            mSkip.setVisibility(View.VISIBLE);
+        } */
     }
 
     @Override
@@ -121,10 +140,22 @@ public class WelcomeActivity extends QKActivity implements ViewPager.OnPageChang
 
             mIndicators[i].setAlpha(1.00f);
         }
-
-        if (mSkip != null) {
-            mSkip.setVisibility(i == 0 || mFinished ? View.VISIBLE : View.INVISIBLE);
+        mFinished = false;
+        if (i < 3 ) {
+            mSkip.setText(R.string.welcome_skip);
+            mContinue = false;
         }
+        //if (mSkip != null) {
+        //    mSkip.setVisibility(i == 0 || mFinished ? View.VISIBLE : View.INVISIBLE);
+        //}
+        if (i == 3) {
+            mSkip.setText(R.string.welcome_continue);
+            mContinue = true;
+        } else if(i == 6) {
+            mSkip.setText(R.string.welcome_finish);
+            mFinished = true;
+        }
+
 
         if (mPrevious != null) {
             mPrevious.setEnabled(i > 0);
@@ -146,8 +177,14 @@ public class WelcomeActivity extends QKActivity implements ViewPager.OnPageChang
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.welcome_skip:
-                setResult(RESULT_OK, null);
-                finish();
+                if (mFinished) {
+                    setResult(RESULT_OK, null);
+                    finish();
+                } else if (mContinue) {
+                    mPager.setCurrentItem(mPager.getCurrentItem() + 1);
+                } else {
+                    mPager.setCurrentItem(3);
+                }
                 break;
             case R.id.welcome_previous:
                 mPager.setCurrentItem(mPager.getCurrentItem() - 1);

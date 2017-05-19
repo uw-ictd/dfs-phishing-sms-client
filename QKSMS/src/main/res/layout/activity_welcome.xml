@@ -72,6 +72,36 @@
             android:padding="4dp"
             android:src="@drawable/ic_unread_indicator" />
 
+
+        <ImageView
+            android:id="@+id/welcome_indicator_3"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:alpha="0.6"
+            android:padding="4dp"
+            android:src="@drawable/ic_unread_indicator" />
+        <ImageView
+            android:id="@+id/welcome_indicator_4"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:alpha="0.6"
+            android:padding="4dp"
+            android:src="@drawable/ic_unread_indicator" />
+        <ImageView
+            android:id="@+id/welcome_indicator_5"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:alpha="0.6"
+            android:padding="4dp"
+            android:src="@drawable/ic_unread_indicator" />
+        <ImageView
+            android:id="@+id/welcome_indicator_6"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:alpha="0.6"
+            android:padding="4dp"
+            android:src="@drawable/ic_unread_indicator" />
+
         <ImageView
             android:id="@+id/welcome_next"
             android:layout_width="64dp"

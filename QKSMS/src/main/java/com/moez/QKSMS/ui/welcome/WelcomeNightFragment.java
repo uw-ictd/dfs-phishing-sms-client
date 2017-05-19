@@ -33,7 +33,7 @@ public class WelcomeNightFragment extends BaseWelcomeFragment implements BaseWel
         mNightHint = (QKTextView) view.findViewById(R.id.welcome_night_hint);
         mNightHint.setOnClickListener(this);
 
-        mContext.setFinished();
+        mContext.setSkip();
 
         return view;
     }
