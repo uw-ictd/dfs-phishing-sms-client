@@ -403,6 +403,8 @@ cd
     <!-- Title of "Report" window -->
     <string name="delivery_header_title">Report</string>
 
+
+
     <!--Text for app restart confirmation dialog-->
     <string name="restart_message">These changes will take effect the next time QKSMS is opened</string>
     <!--Dialog title for asking if a user wants to delete a conversation-->
