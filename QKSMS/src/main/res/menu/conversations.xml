@@ -15,12 +15,13 @@
         android:id="@+id/menu_blocked"
         android:title="@string/pref_blocked_conversations"
         android:visible="false" />
+    <item
+        android:id="@+id/menu_send_data_to_UW"
+        android:title="Send SMS Data to UW" />
 
     <item
         android:id="@+id/menu_changelog"
         android:title="@string/menu_changelog" />
 
-    <item
-        android:id="@+id/menu_donate"
-        android:title="@string/menu_billing" />
+
 </menu>
