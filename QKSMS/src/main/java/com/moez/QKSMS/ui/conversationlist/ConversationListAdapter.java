@@ -89,7 +89,8 @@ public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationL
             sideDb = new SidebandDBSource(mContext);
         }
         long threadId = conversation.getThreadId();
-        String address = (new ConversationLegacy(mContext, threadId)).getAddress();
+        //String address = (new ConversationLegacy(mContext, threadId)).getAddress();
+        String address = (Conversation.get(mContext, threadId, true)).getRecipients().getNumbers()[0];
         String tag = sideDb.getMessageSidebandDbEntryByAddress(address, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO);
 
         boolean setPrivate = sideDb.getAddresseeIsPrivate(address);
