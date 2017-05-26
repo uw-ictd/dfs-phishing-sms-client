@@ -143,7 +143,7 @@ public class UWDataOffloadHelper {
 
         new QKDialog()
                 .setContext(context)
-                .setTitle("Message Sync Complete")
+                .setTitle(R.string.messagas_synced)
                 .show();
     }
 }

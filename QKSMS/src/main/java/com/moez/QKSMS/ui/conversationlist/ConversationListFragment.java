@@ -42,6 +42,7 @@ import com.moez.QKSMS.ui.TutorialSlidePagerActiviy;
 import com.moez.QKSMS.ui.base.QKFragment;
 import com.moez.QKSMS.ui.base.RecyclerCursorAdapter;
 import com.moez.QKSMS.ui.compose.ComposeActivity;
+import com.moez.QKSMS.ui.dialog.QKDialog;
 import com.moez.QKSMS.ui.dialog.conversationdetails.ConversationDetailsDialog;
 import com.moez.QKSMS.ui.messagelist.MessageListActivity;
 import com.moez.QKSMS.ui.settings.SettingsFragment;
@@ -420,7 +421,16 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
         }
         for (long threadId : mAdapter.getSelectedItems().keySet()) {
             String addressee = (new ConversationLegacy(mContext, threadId)).getAddress();
-            sideDb.setConversationSidebandDBEntryByAddress(addressee, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO, tag);
+            if (sideDb.setConversationSidebandDBEntryByAddress(addressee, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO, tag) == 0) {
+                String title = getResources().getString(R.string.illegal_tag);
+
+                new QKDialog()
+                        .setContext(mContext)
+                        .setTitle(addressee)
+                        .setMessage(R.string.illegal_tag_message)
+                        .setCancelOnTouchOutside(true)
+                        .show();
+            }
         }
     }
 

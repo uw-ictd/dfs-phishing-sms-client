@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <!--Strings added for DFS-->
+    <string name="illegal_tag">%s\ntagging failed</string>
+    <string name="illegal_tag_message">Cannot tag conversations with no messages received after download</string>
     <string name="app_name">SMiSh Busters</string>
     <string name="privacy_title">Privacy</string>
     <string name="compensation_title">Compensation</string>
     <string name="agreement_title">Agreement</string>
     <string name="summary_title">Agreement Completion</string>
-
+    <string name ="messagas_synced">Message Sync Complete</string>
     <string name="agreement">SMiSh Busters is a Research project from the Univeristy of Washington.
 
     To participate in the project and earn money, you must read and agree to the following statements.
