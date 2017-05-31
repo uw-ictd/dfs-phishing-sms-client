@@ -1,6 +1,5 @@
 package com.moez.QKSMS.ui.conversationlist;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,16 +13,13 @@ import com.moez.QKSMS.common.emoji.EmojiRegistry;
 import com.moez.QKSMS.common.utils.DateFormatter;
 import com.moez.QKSMS.data.Contact;
 import com.moez.QKSMS.data.Conversation;
-import com.moez.QKSMS.data.ConversationLegacy;
 import com.moez.QKSMS.data.MessageSidebandDBHelper;
 import com.moez.QKSMS.data.SidebandDBSource;
 import com.moez.QKSMS.enums.QKPreference;
 import com.moez.QKSMS.ui.ThemeManager;
-import com.moez.QKSMS.ui.TutorialSlidePagerActiviy;
 import com.moez.QKSMS.ui.base.QKActivity;
 import com.moez.QKSMS.ui.base.RecyclerCursorAdapter;
 import com.moez.QKSMS.ui.settings.SettingsFragment;
-import com.moez.QKSMS.ui.welcome.WelcomeActivity;
 
 public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationListViewHolder, Conversation> {
 
@@ -113,8 +109,8 @@ public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationL
                 hasTag = true;
             }
 
-            if (tag.startsWith(SidebandDBSource.UW_MESSAGE_IS_UNKOWN) || tag.contains(SidebandDBSource.UW_MESSAGE_IS_UNKOWN)) {
-                holder.tagIndicator.setImageResource(R.drawable.ic_mark_unkown);
+            if (tag.startsWith(SidebandDBSource.UW_MESSAGE_IS_UNKNOWN) || tag.contains(SidebandDBSource.UW_MESSAGE_IS_UNKNOWN)) {
+                holder.tagIndicator.setImageResource(R.drawable.ic_mark_unknown);
                 hasTag = true;
             }
 

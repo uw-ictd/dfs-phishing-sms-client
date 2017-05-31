@@ -9,6 +9,8 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SqliteWrapper;
@@ -65,6 +67,7 @@ import com.moez.QKSMS.ui.SwipeBackLayout;
 import com.moez.QKSMS.ui.ThemeManager;
 import com.moez.QKSMS.ui.base.QKFragment;
 import com.moez.QKSMS.ui.base.RecyclerCursorAdapter;
+import com.moez.QKSMS.ui.conversationlist.ConversationListFragment;
 import com.moez.QKSMS.ui.delivery.DeliveryReportHelper;
 import com.moez.QKSMS.ui.delivery.DeliveryReportItem;
 import com.moez.QKSMS.ui.dialog.AsyncDialog;
@@ -489,6 +492,15 @@ public class MessageListFragment extends QKFragment implements ActivityLauncher,
                 }
                 mContext.invalidateOptionsMenu();
                 mAdapter.disableMultiSelectMode(true);
+                    if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        this.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                        this.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    } else {
+                        this.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                        this.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    }
+                //Intent refresh = new Intent(this.getActivity(), MainActivity.class);
+                //startActivity(refresh);
                 return true;
 
             case R.id.menu_notifications:

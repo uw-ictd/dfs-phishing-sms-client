@@ -17,7 +17,7 @@ public class SidebandDBSource {
     public static final String UW_MESSAGE_IS_SCAM = "SCAM,";
     public static final String UW_MESSAGE_IS_FRAUD = "FRAUD,";
     public static final String UW_MESSAGE_IS_OK = "OK,";
-    public static final String UW_MESSAGE_IS_UNKOWN = "unkown,";
+    public static final String UW_MESSAGE_IS_UNKNOWN = "unknown,";
 
     // Database fields
     private SQLiteDatabase database;

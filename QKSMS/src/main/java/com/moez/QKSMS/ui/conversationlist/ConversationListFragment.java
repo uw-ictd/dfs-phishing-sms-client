@@ -3,7 +3,6 @@ package com.moez.QKSMS.ui.conversationlist;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -38,7 +37,6 @@ import com.moez.QKSMS.enums.QKPreference;
 import com.moez.QKSMS.transaction.SmsHelper;
 import com.moez.QKSMS.ui.MainActivity;
 import com.moez.QKSMS.ui.ThemeManager;
-import com.moez.QKSMS.ui.TutorialSlidePagerActiviy;
 import com.moez.QKSMS.ui.base.QKFragment;
 import com.moez.QKSMS.ui.base.RecyclerCursorAdapter;
 import com.moez.QKSMS.ui.compose.ComposeActivity;
@@ -46,8 +44,6 @@ import com.moez.QKSMS.ui.dialog.QKDialog;
 import com.moez.QKSMS.ui.dialog.conversationdetails.ConversationDetailsDialog;
 import com.moez.QKSMS.ui.messagelist.MessageListActivity;
 import com.moez.QKSMS.ui.settings.SettingsFragment;
-import com.moez.QKSMS.ui.view.QKTextView;
-import com.moez.QKSMS.ui.welcome.WelcomeActivity;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -201,7 +197,7 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
             menu.findItem(R.id.menu_block).setVisible(mPrefs.getBoolean(SettingsFragment.BLOCKED_ENABLED, false));
 
             menu.findItem(R.id.menu_mark_fraud).setIcon(R.drawable.ic_mark_fraud);
-            menu.findItem(R.id.menu_mark_unkown).setIcon(R.drawable.ic_mark_unkown);
+            menu.findItem(R.id.menu_mark_unkown).setIcon(R.drawable.ic_mark_unknown);
             menu.findItem(R.id.menu_mark_spam).setIcon(R.drawable.ic_mark_spam);
             menu.findItem(R.id.menu_mark_check).setIcon(R.drawable.ic_mark_check);
 
@@ -277,7 +273,7 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
 
             case R.id.menu_mark_unkown:
             case R.id.menu_mark_unkown_text:
-                mark_conversations(SidebandDBSource.UW_MESSAGE_IS_UNKOWN);
+                mark_conversations(SidebandDBSource.UW_MESSAGE_IS_UNKNOWN);
                 initLoaderManager();
                 return true;
 
