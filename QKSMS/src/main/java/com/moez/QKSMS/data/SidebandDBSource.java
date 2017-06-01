@@ -165,7 +165,7 @@ public class SidebandDBSource {
         close();
 
         //mark all messages to the addressee as unsent, meaning they will be pushed up on next update
-        markAllThreadIDMsgSent(thread_id);
+        markAllThreadIDMsgUnsent(thread_id);
 
         return returnval;
 
