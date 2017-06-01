@@ -26,12 +26,15 @@ public class SidebandDBSource {
     //full column list of sms_sideband_db
     private String[] allColumnsSideband = { MessageSidebandDBHelper.SIDEBAND_COLUMN_ID,
             MessageSidebandDBHelper.SIDEBAND_COLUMN_MESSAGEDB_ID,
+            MessageSidebandDBHelper.SIDEBAND_COLUMN_THREAD_ID,
+            MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE,
             MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO,
             MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW};
 
     //full column list of sms_privacy_db
     private String[] allColumnsPrivacy = { MessageSidebandDBHelper.PRIVACY_COLUMN_ID,
-            MessageSidebandDBHelper.PRIVACY_COLUMN_ADDRESSEE};
+            MessageSidebandDBHelper.PRIVACY_COLUMN_THREAD_ID};
+            //MessageSidebandDBHelper.PRIVACY_COLUMN_ADDRESSEE};
 
     public SidebandDBSource(Context context) {
         dbHelper = new MessageSidebandDBHelper(context);
@@ -52,13 +55,14 @@ public class SidebandDBSource {
     }
 
     //sms_sideband_db accessors
-    public Boolean createNewMessageSidebandDBEntry(String messagedb_id, String extra_info, String addressee) {
+    public Boolean createNewMessageSidebandDBEntry(String messagedb_id, String extra_info, long thread_id, String addressee) {
         ContentValues values = new ContentValues();
         addressee = stripChars(addressee);
         values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_MESSAGEDB_ID, messagedb_id);
         values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO, extra_info);
+        values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_THREAD_ID, thread_id);
         values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE, addressee);
-        if(getAddresseeIsPrivate(addressee)) {
+        if(getThreadIsPrivate(thread_id)) {
             values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW, MESSAGE_SENT);
         }
         openWrite();
@@ -72,10 +76,10 @@ public class SidebandDBSource {
         return true;
     }
 
-    public String getMessageSidebandDbEntryByAddress(String addressee, String field) {
+    public String getMessageSidebandDbEntryByThreadID(long thread_id, String field) {
         String [] columns = { field };
-        String where = MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE + "=?";
-        String [] whereArgs = { addressee};
+        String where = MessageSidebandDBHelper.SIDEBAND_COLUMN_THREAD_ID + "=?";
+        String [] whereArgs = { Long.toString(thread_id) };
         String returnval = "";
 
         openRead();
@@ -88,6 +92,7 @@ public class SidebandDBSource {
         close();
         return returnval;
     }
+
 
     public String getMessageSidebandDBEntryByArg(String messagedb_id, String field) {
 
@@ -108,15 +113,14 @@ public class SidebandDBSource {
 
     }
 
-    public int setConversationSidebandDBEntryByAddress(String addressee, String field, String newVal) {
-        addressee = stripChars(addressee);
+    public int setConversationSidebandDBEntryByThreadID(long thread_id, String field, String newVal) {
         ContentValues dataToUpdate = new ContentValues();
         dataToUpdate.put(field,newVal);
 
 
 
-        String where = MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE + "=?";
-        String [] whereArgs = { stripChars(addressee)};
+        String where = MessageSidebandDBHelper.SIDEBAND_COLUMN_THREAD_ID + "=?";
+        String [] whereArgs = {Long.toString(thread_id)};
 
 
         int returnval = -1;
@@ -129,6 +133,7 @@ public class SidebandDBSource {
         close();
         return returnval;
     }
+
 
     public int setMessageSidebandDBEntryByArg(String messagedb_id, String field, String newVal) {
 
@@ -149,10 +154,10 @@ public class SidebandDBSource {
     }
 
     //sms_privacy_db accessors
-    public int clearPrivacyDBEntry(String addressee) {
+    public int clearPrivacyDBEntry(long thread_id) {
 
-        String where = MessageSidebandDBHelper.PRIVACY_COLUMN_ADDRESSEE + "=?";
-        String [] whereArgs = {stripChars(addressee)};
+        String where = MessageSidebandDBHelper.PRIVACY_COLUMN_THREAD_ID + "=?";
+        String [] whereArgs = {Long.toString(thread_id)};
         int returnval;
 
         openRead();
@@ -160,35 +165,38 @@ public class SidebandDBSource {
         close();
 
         //mark all messages to the addressee as unsent, meaning they will be pushed up on next update
-        markAllAddresseeMsgUnsent(stripChars(addressee));
+        markAllThreadIDMsgSent(thread_id);
 
         return returnval;
 
     }
 
-    public int setPrivacyDBEntry(String addressee) {
+
+    public int setPrivacyDBEntry(long thread_id) {
 
         ContentValues values = new ContentValues();
-        values.put(MessageSidebandDBHelper.PRIVACY_COLUMN_ADDRESSEE,stripChars(addressee));
+        values.put(MessageSidebandDBHelper.PRIVACY_COLUMN_THREAD_ID, thread_id);
         int returnval;
 
-        //Insert this addressee into the database or ignore it if is already there (only 1 _real_ column in table so only conflict is itself)
+        //Insert this thread into the database or ignore it if is already there (only 1 _real_ column in table so only conflict is itself)
         openWrite();
         returnval = (int)database.insertWithOnConflict(MessageSidebandDBHelper.TABLE_NAME_PRIVACYDB, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         close();
 
         //mark all messages from this user as sent.  Effectively making them private
-        markAllAddresseeMsgSent(stripChars(addressee));
+        markAllThreadIDMsgSent(thread_id);
 
         return returnval;
 
     }
 
-    public boolean getAddresseeIsPrivate(String addressee) {
 
-        String [] columns = { MessageSidebandDBHelper.PRIVACY_COLUMN_ADDRESSEE};
-        String where = MessageSidebandDBHelper.PRIVACY_COLUMN_ADDRESSEE + "=?";
-        String [] whereArgs = {stripChars(addressee)};
+    public boolean getThreadIsPrivate(long thread_id) {
+
+        String [] columns = { MessageSidebandDBHelper.PRIVACY_COLUMN_THREAD_ID};
+        String where = MessageSidebandDBHelper.PRIVACY_COLUMN_THREAD_ID + "=?";
+        String [] whereArgs = {Long.toString(thread_id)};
+        //String [] whereArgs = {stripChars(addressee)};
         Cursor myCursor;
         boolean returnval;
 
@@ -213,13 +221,11 @@ public class SidebandDBSource {
         return returnval;
     }
 
-    private int markAllAddresseeMsgSent (String addressee) {
-
-        addressee = stripChars(addressee);
+    private int markAllThreadIDMsgSent(long thread_id) {
         ContentValues dataToUpdate = new ContentValues();
         dataToUpdate.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW, MESSAGE_SENT);
-        String where = MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE + "=?";
-        String [] whereArgs = { stripChars(addressee)};
+        String where = MessageSidebandDBHelper.SIDEBAND_COLUMN_THREAD_ID + "=?";
+        String [] whereArgs = { Long.toString(thread_id) };
         int returnval;
 
         openWrite();
@@ -229,17 +235,15 @@ public class SidebandDBSource {
 
         close();
         return returnval;
-
     }
 
-    private int markAllAddresseeMsgUnsent (String addressee) {
+    private int markAllThreadIDMsgUnsent (long thread_id) {
 
         //Prep for update
-        addressee = stripChars(addressee);
         ContentValues dataToUpdate = new ContentValues();
         dataToUpdate.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW, MESSAGE_UNSENT);
-        String where = MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE + "=?";
-        String [] whereArgs = { addressee};
+        String where = MessageSidebandDBHelper.SIDEBAND_COLUMN_THREAD_ID + "=?";
+        String [] whereArgs = {Long.toString(thread_id)};
 
         int returnval;
 

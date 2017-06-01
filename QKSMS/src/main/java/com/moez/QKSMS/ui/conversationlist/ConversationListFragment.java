@@ -421,7 +421,7 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
         }
         for (long threadId : mAdapter.getSelectedItems().keySet()) {
             String addressee = (new ConversationLegacy(mContext, threadId)).getAddress();
-            if (sideDb.setConversationSidebandDBEntryByAddress(addressee, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO, tag) == 0) {
+            if (sideDb.setConversationSidebandDBEntryByThreadID(threadId, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO, tag) == 0) {
                 String title = getResources().getString(R.string.illegal_tag);
 
                 new QKDialog()
