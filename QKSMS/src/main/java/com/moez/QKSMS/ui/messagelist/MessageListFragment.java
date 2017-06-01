@@ -480,15 +480,18 @@ public class MessageListFragment extends QKFragment implements ActivityLauncher,
                 boolean conversationPrivate = !mConversationPrefs.getUWConversationPrivateEnabled();
                 mConversationPrefs.putBoolean(SettingsFragment.UW_CONVO_PRIVATE, conversationPrivate);
                 SidebandDBSource db = new SidebandDBSource(mContext);
-                String [] tempAddrs = mConversation.getRecipients().getNumbers(false);
+                //String [] tempAddrs = mConversation.getRecipients().getNumbers(false);
+                long thread_id = mConversation.getThreadId();
                 if(conversationPrivate) {
-                    for (int i = 0; i < tempAddrs.length; i++) {
-                        db.setPrivacyDBEntry(tempAddrs[i]);
-                    }
+                    db.setPrivacyDBEntry(thread_id);
+                    //for (int i = 0; i < tempAddrs.length; i++) {
+                        //db.setPrivacyDBEntry(tempAddrs[i]);
+                    //}
                 } else {
-                    for (int i = 0; i < tempAddrs.length; i++) {
-                        db.clearPrivacyDBEntry(tempAddrs[i]);
-                    }
+                    db.clearPrivacyDBEntry(thread_id);
+                    //for (int i = 0; i < tempAddrs.length; i++) {
+                        //db.clearPrivacyDBEntry(tempAddrs[i]);
+                    //}
                 }
                 mContext.invalidateOptionsMenu();
                 mAdapter.disableMultiSelectMode(true);

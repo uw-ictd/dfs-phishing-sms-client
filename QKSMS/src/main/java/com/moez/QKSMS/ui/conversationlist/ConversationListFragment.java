@@ -416,13 +416,15 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
             sideDb = new SidebandDBSource(mContext);
         }
         for (long threadId : mAdapter.getSelectedItems().keySet()) {
-            String addressee = (new ConversationLegacy(mContext, threadId)).getAddress();
-            if (sideDb.setConversationSidebandDBEntryByAddress(addressee, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO, tag) == 0) {
+            // Get list of numbers in conversation and convert it to a string for display.
+            String[] addressList = Conversation.get(mContext, threadId, true).getRecipients().getNumbers();
+            String addresses = android.text.TextUtils.join(", ", addressList);
+            if (sideDb.setConversationSidebandDBEntryByThreadID(threadId, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO, tag) == 0) {
                 String title = getResources().getString(R.string.illegal_tag);
 
                 new QKDialog()
                         .setContext(mContext)
-                        .setTitle(addressee)
+                        .setTitle(addresses)
                         .setMessage(R.string.illegal_tag_message)
                         .setCancelOnTouchOutside(true)
                         .show();

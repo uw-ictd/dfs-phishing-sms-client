@@ -86,10 +86,11 @@ public class ConversationListAdapter extends RecyclerCursorAdapter<ConversationL
         }
         long threadId = conversation.getThreadId();
         //String address = (new ConversationLegacy(mContext, threadId)).getAddress();
-        String address = (Conversation.get(mContext, threadId, true)).getRecipients().getNumbers()[0];
-        String tag = sideDb.getMessageSidebandDbEntryByAddress(address, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO);
+        //String address = (Conversation.get(mContext, threadId, true)).getRecipients().getNumbers()[0];
+        String tag = sideDb.getMessageSidebandDbEntryByThreadID(threadId, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO);
 
-        boolean setPrivate = sideDb.getAddresseeIsPrivate(address);
+        //boolean setPrivate = sideDb.getAddresseeIsPrivate(address);
+        boolean setPrivate = sideDb.getThreadIsPrivate(threadId);
         holder.tagIndicator.setVisibility(View.INVISIBLE);
         if (setPrivate) {
 
