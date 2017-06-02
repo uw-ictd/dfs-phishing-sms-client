@@ -37,11 +37,6 @@
             android:layout="@layout/list_item_preference"
             android:title="@string/pref_about_crowdin_title"
             android:summary="@string/pref_about_crowdin_summary" />
-        <Preference
-            android:icon="@drawable/ic_donate"
-            android:key="pref_key_donate"
-            android:layout="@layout/list_item_preference"
-            android:summary="@string/pref_donate_summary"
-            android:title="@string/pref_donate_title" />
+
     </PreferenceCategory>
 </PreferenceScreen>

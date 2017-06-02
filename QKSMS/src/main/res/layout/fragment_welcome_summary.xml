@@ -32,16 +32,36 @@
         android:layout_width="match_parent"
         android:layout_height="64sp" />
 
-    <ScrollView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/agreement_summary"/>
 
+        <CheckBox android:id="@+id/checkbox_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/agreement_check_1"
+            android:onClick="onCheckboxClicked"/>
+        <CheckBox android:id="@+id/checkbox_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/agreement_check_2"
+            android:onClick="onCheckboxClicked"/>
+        <CheckBox android:id="@+id/checkbox_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/agreement_check_3"
+            android:onClick="onCheckboxClicked"/>
+        <CheckBox android:id="@+id/checkbox_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/agreement_check_4"
+            android:onClick="onCheckboxClicked"/>
 
-    </ScrollView>
+    </LinearLayout>
 
 </LinearLayout>

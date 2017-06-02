@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import com.moez.QKSMS.R;
 import com.moez.QKSMS.common.LiveViewManager;
@@ -29,11 +30,14 @@ public class WelcomeActivity extends QKActivity implements ViewPager.OnPageChang
     private RobotoTextView mSkip;
     private boolean mFinished;
     private boolean mContinue;
+    private int checkCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+
+        checkCount = 0;
 
         getSupportActionBar().hide();
 
@@ -153,6 +157,7 @@ public class WelcomeActivity extends QKActivity implements ViewPager.OnPageChang
             mContinue = true;
         } else if(i == 6) {
             mSkip.setText(R.string.welcome_finish);
+            mSkip.setVisibility(View.GONE);
             mFinished = true;
         }
 
@@ -202,5 +207,56 @@ public class WelcomeActivity extends QKActivity implements ViewPager.OnPageChang
         SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(this).edit();
         prefs.putBoolean(SettingsFragment.WELCOME_SEEN, true);
         prefs.apply();
+    }
+
+    public void onCheckboxClicked(View view) {
+        // Is the view now checked?
+        boolean checked = ((CheckBox) view).isChecked();
+
+        // Check which checkbox was clicked
+        switch(view.getId()) {
+            case R.id.checkbox_1:
+                if (checked) {
+                    incrementCheck();
+                } else {
+                    decrementCheck();
+                }
+                break;
+            case R.id.checkbox_2:
+                if (checked) {
+                    incrementCheck();
+                } else {
+                    decrementCheck();
+                }
+                break;
+            case R.id.checkbox_3:
+                if (checked) {
+                    incrementCheck();
+                } else {
+                    decrementCheck();
+
+                }
+                break;
+            case R.id.checkbox_4:
+                if (checked) {
+                    incrementCheck();
+                } else {
+                    decrementCheck();
+                }
+                break;
+            // TODO: Veggie sandwich
+        }
+    }
+
+    private void incrementCheck() {
+        checkCount++;
+        if (checkCount ==  4) {
+            mSkip.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void decrementCheck() {
+        checkCount--;
+        mSkip.setVisibility(View.INVISIBLE);
     }
 }

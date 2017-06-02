@@ -30,15 +30,17 @@ For each SMS that you label, you will receive 0.01 USD, and for each week you co
         .
         The information is sent to our servers over a secure channel (HTTPS) and is stored securely on our servers. All the data is stored securely on our server and accessible only to the research team. In the app, you can see which of your SMS are saved on our server and request certain or all SMS to be removed from our server. Our study and data handling protocols have been approved by the University of Washington Institute Review Board.</string>
 
-    <string name="agreement_summary">I acknowledge that my SMS content and metadata will be collected in this study.
+    <string name="agreement_summary">If you would like to participate in the study, you must agree to the following statements.</string>
 
-        I acknowledge that I can withdraw from the study at any time.
+    <string name ="agreement_check_1"> I acknowledge that my SMS content and metadata will be collected in this study.</string>
 
-        I acknowledge that my data may be shared anonymously with other researchers.
+    <string name ="agreement_check_2"> I acknowledge that I can withdraw from the study at any time.</string>
 
-        I have read and understand the study procedures.
+    <string name ="agreement_check_3"> I acknowledge that my data may be shared anonymously with other researchers.</string>
+
+    <string name ="agreement_check_4"> I have read and understand the study procedures.</string>
 cd
-        The full consent form is available online here.</string>
+     <string name="agreement_online"> The full consent form is available online here.</string>
 
     <!--String shown on first tutorial slide -->
     <string name="welcome_continue">CONTINUE</string>
