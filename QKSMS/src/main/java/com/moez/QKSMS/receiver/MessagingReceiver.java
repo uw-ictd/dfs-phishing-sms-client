@@ -111,10 +111,11 @@ public class MessagingReceiver extends BroadcastReceiver {
             sideDb = new SidebandDBSource(mContext);
         }
 
-        sideDb.createNewMessageSidebandDBEntry(mUri.toString(), "", mAddress);
-
         Message message = new Message(mContext, mUri);
         ConversationPrefsHelper conversationPrefs = new ConversationPrefsHelper(mContext, message.getThreadId());
+
+        //long mThread_id = message.getThreadId();
+        sideDb.createNewMessageSidebandDBEntry(mUri.toString(), "", message.getThreadId(), mAddress);
 
         // The user has set messages from this address to be blocked, but we at the time there weren't any
         // messages from them already in the database, so we couldn't block any thread URI. Now that we have one,

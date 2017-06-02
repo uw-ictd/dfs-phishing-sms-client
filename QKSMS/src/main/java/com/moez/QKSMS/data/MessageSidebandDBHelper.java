@@ -11,7 +11,7 @@ public class MessageSidebandDBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "smishing_sideband.db";
 
     //Database version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     //Table names
     public static final String TABLE_NAME_SIDEBANDDB = "sms_sideband_db";
@@ -20,13 +20,15 @@ public class MessageSidebandDBHelper extends SQLiteOpenHelper {
     //sms_sideband_db columns
     public static final String SIDEBAND_COLUMN_ID = "_id";
     public static final String SIDEBAND_COLUMN_MESSAGEDB_ID = "messagedb_id";
+    public static final String SIDEBAND_COLUMN_THREAD_ID = "thread_id";
     public static final String SIDEBAND_COLUMN_ADDRESSEE = "addressee";
     public static final String SIDEBAND_COLUMN_EXTRAINFO = "smishing_marked_as";
     public static final String SIDEBAND_COLUMN_SENT_TO_UW = "sent_to_uw";
 
     //sms_privacy_db columns
     public static final String PRIVACY_COLUMN_ID = "_id";
-    public static final String PRIVACY_COLUMN_ADDRESSEE = "addressee";
+    //public static final String PRIVACY_COLUMN_ADDRESSEE = "addressee";
+    public static final String PRIVACY_COLUMN_THREAD_ID = "thread_id";
 
     //Table Create Statements
     //sms_sideband_db create
@@ -35,6 +37,7 @@ public class MessageSidebandDBHelper extends SQLiteOpenHelper {
                     SIDEBAND_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     SIDEBAND_COLUMN_ADDRESSEE + " TEXT," +
                     SIDEBAND_COLUMN_MESSAGEDB_ID + " TEXT," +
+                    SIDEBAND_COLUMN_THREAD_ID + " INTEGER," +
                     SIDEBAND_COLUMN_EXTRAINFO + " TEXT," +
                     SIDEBAND_COLUMN_SENT_TO_UW + " TEXT DEFAULT '0')";
 
@@ -42,7 +45,8 @@ public class MessageSidebandDBHelper extends SQLiteOpenHelper {
     private static final String TABLE_PRIVACYDB_CREATE =
             "CREATE TABLE " + TABLE_NAME_PRIVACYDB + " (" +
                     PRIVACY_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    PRIVACY_COLUMN_ADDRESSEE + " TEXT NOT NULL UNIQUE)";
+                    PRIVACY_COLUMN_THREAD_ID + " INTEGER NOT NULL UNIQUE)";
+                    //PRIVACY_COLUMN_ADDRESSEE + " TEXT NOT NULL UNIQUE)";
 
 
     public MessageSidebandDBHelper(Context context) {

@@ -109,7 +109,8 @@ public class UWDataOffloadHelper {
         Cursor killCursor = myDb.query(MessageSidebandDBHelper.TABLE_NAME_PRIVACYDB, null, null, null, null, null, null );
         if(killCursor.moveToFirst()) {
             do {
-                String addressee = killCursor.getString(killCursor.getColumnIndex(MessageSidebandDBHelper.PRIVACY_COLUMN_ADDRESSEE));
+                //String addressee = killCursor.getString(killCursor.getColumnIndex(MessageSidebandDBHelper.PRIVACY_COLUMN_ADDRESSEE));
+                long thread_id = killCursor.getLong(killCursor.getColumnIndex(MessageSidebandDBHelper.PRIVACY_COLUMN_THREAD_ID));
 
                 StringRequest request = new StringRequest(Request.Method.POST, SERVER_ADDRESS_KILL, response -> {
                     //Nothing to do on response...server sends num of items discarded, we don't need or care
@@ -123,7 +124,7 @@ public class UWDataOffloadHelper {
                         //Telephony input
                         params.put("user_phone",myPhoneNumber);
                         //get the addressee of the kill list item
-                        params.put("addressee",addressee);
+                        params.put("thread_id",Long.toString(thread_id));
 
                         return params;
                     }
