@@ -61,11 +61,6 @@
             android:layout="@layout/list_item_preference"
             android:summary="@string/pref_category_summary_about"
             android:title="@string/pref_category_about" />
-        <Preference
-            android:icon="@drawable/ic_donate"
-            android:key="pref_key_donate"
-            android:layout="@layout/list_item_preference"
-            android:summary="@string/pref_donate_summary"
-            android:title="@string/pref_donate_title" />
+
     </PreferenceCategory>
 </PreferenceScreen>

@@ -196,10 +196,6 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
 
             menu.findItem(R.id.menu_block).setVisible(mPrefs.getBoolean(SettingsFragment.BLOCKED_ENABLED, false));
 
-            menu.findItem(R.id.menu_mark_fraud).setIcon(R.drawable.ic_mark_fraud);
-            menu.findItem(R.id.menu_mark_unkown).setIcon(R.drawable.ic_mark_unknown);
-            menu.findItem(R.id.menu_mark_spam).setIcon(R.drawable.ic_mark_spam);
-            menu.findItem(R.id.menu_mark_check).setIcon(R.drawable.ic_mark_check);
 
             menu.findItem(R.id.menu_mark_read).setIcon(getUnreadWeight() >= 0 ? R.drawable.ic_mark_read : R.drawable.ic_mark_unread);
             menu.findItem(R.id.menu_mark_read).setTitle(getUnreadWeight() >= 0 ? R.string.menu_mark_read : R.string.menu_mark_unread);
@@ -252,7 +248,6 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
                 initLoaderManager();
                 return true;
 
-            // TODO Add functionality to following eight (redundancy is to allow  both icon and text menu options) cases:
             case R.id.menu_mark_fraud:
             case R.id.menu_mark_fraud_text:
                 mark_conversations(SidebandDBSource.UW_MESSAGE_IS_FRAUD);

@@ -57,6 +57,7 @@ import com.moez.QKSMS.data.ContactList;
 import com.moez.QKSMS.data.Conversation;
 import com.moez.QKSMS.data.ConversationLegacy;
 import com.moez.QKSMS.data.Message;
+import com.moez.QKSMS.data.MessageSidebandDBHelper;
 import com.moez.QKSMS.data.UWDataOffloadHelper;
 import com.moez.QKSMS.enums.QKPreference;
 import com.moez.QKSMS.interfaces.ActivityLauncher;
@@ -147,6 +148,9 @@ public class MessageListFragment extends QKFragment implements ActivityLauncher,
     private long mRowId;
     private String mHighlight;
     private boolean mShowImmediate;
+
+    private SidebandDBSource sideDb;
+
 
     protected static MessageListFragment getInstance(long threadId, long rowId, String highlight, boolean showImmediate) {
 
@@ -524,6 +528,30 @@ public class MessageListFragment extends QKFragment implements ActivityLauncher,
                 DialogHelper.showDeleteConversationDialog(mContext, mThreadId);
                 return true;
 
+            case R.id.menu_mark_fraud:
+            case R.id.menu_mark_fraud_text:
+                mark_conversations(SidebandDBSource.UW_MESSAGE_IS_FRAUD);
+                initLoaderManager();
+                return true;
+
+            case R.id.menu_mark_spam:
+            case R.id.menu_mark_spam_text:
+                mark_conversations(SidebandDBSource.UW_MESSAGE_IS_SPAM);
+                initLoaderManager();
+                return true;
+
+            case R.id.menu_mark_check:
+            case R.id.menu_mark_check_text:
+                mark_conversations(SidebandDBSource.UW_MESSAGE_IS_OK);
+                initLoaderManager();
+                return true;
+
+            case R.id.menu_mark_unkown:
+            case R.id.menu_mark_unkown_text:
+                mark_conversations(SidebandDBSource.UW_MESSAGE_IS_UNKNOWN);
+                initLoaderManager();
+                return true;
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -658,6 +686,12 @@ public class MessageListFragment extends QKFragment implements ActivityLauncher,
                 R.string.menu_notifications : R.string.menu_notifications_off);
         menu.findItem(R.id.menu_notifications).setIcon(mConversationPrefs.getNotificationsEnabled() ?
                 R.drawable.ic_notifications : R.drawable.ic_notifications_muted);
+
+
+        menu.findItem(R.id.menu_mark_fraud).setIcon(R.drawable.ic_mark_fraud);
+        menu.findItem(R.id.menu_mark_unkown).setIcon(R.drawable.ic_mark_unknown);
+        menu.findItem(R.id.menu_mark_spam).setIcon(R.drawable.ic_mark_spam);
+        menu.findItem(R.id.menu_mark_check).setIcon(R.drawable.ic_mark_check);
     }
 
     @Override
@@ -1058,6 +1092,27 @@ public class MessageListFragment extends QKFragment implements ActivityLauncher,
 
             if (isAdded()) {
                 initLoaderManager();
+            }
+        }
+    }
+
+
+    public void mark_conversations(String tag) {
+
+        if (sideDb == null) {
+            sideDb = new SidebandDBSource(mContext);
+        }
+        for (long threadId : mAdapter.getSelectedItems().keySet()) {
+            String addressee = (new ConversationLegacy(mContext, threadId)).getAddress();
+            if (sideDb.setConversationSidebandDBEntryByAddress(addressee, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO, tag) == 0) {
+                String title = getResources().getString(R.string.illegal_tag);
+
+                new QKDialog()
+                        .setContext(mContext)
+                        .setTitle(addressee)
+                        .setMessage(R.string.illegal_tag_message)
+                        .setCancelOnTouchOutside(true)
+                        .show();
             }
         }
     }
