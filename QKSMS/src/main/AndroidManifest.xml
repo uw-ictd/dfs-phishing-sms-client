@@ -555,9 +555,12 @@
             android:name=".ui.widget.WidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
+        <!--<meta-data-->
+            <!--android:name="io.fabric.ApiKey"-->
+            <!--android:value="0" />-->
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="0" />
+            android:value="06fc491349895cb140af03671e7ae6d496d0670f" />
 
         <uses-library
             android:name="com.sec.android.app.multiwindow"
