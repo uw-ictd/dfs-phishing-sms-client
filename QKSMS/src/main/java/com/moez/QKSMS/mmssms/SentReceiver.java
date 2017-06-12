@@ -25,6 +25,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.moez.QKSMS.data.*;
 
 public class SentReceiver extends BroadcastReceiver {
     private static final String TAG = "SentReceiver";
@@ -54,6 +57,7 @@ public class SentReceiver extends BroadcastReceiver {
                         values.put("type", 2);
                         values.put("read", 1);
                         context.getContentResolver().update(uri, values, null, null);
+                        recordSentMessage(context, uri);
                     } catch (NullPointerException e) {
                         markFirstAsSent(context);
                     }
@@ -103,12 +107,25 @@ public class SentReceiver extends BroadcastReceiver {
         // mark message as sent successfully
         if (query != null && query.moveToFirst()) {
             String id = query.getString(query.getColumnIndex("_id"));
+            long threadId = Long.parseLong(query.getString(query.getColumnIndex("thread_id")));
+            String address = query.getString(query.getColumnIndex("address"));
             ContentValues values = new ContentValues();
             values.put("type", 2);
             values.put("read", 1);
             context.getContentResolver().update(Uri.parse("content://sms/outbox"), values, "_id=" + id, null);
+            SidebandDBSource sideDb = new SidebandDBSource(context);
+            sideDb.createNewMessageSidebandDBEntry("content://sms/"+id, "", threadId, address);
         }
 
         query.close();
+    }
+
+    private void recordSentMessage(Context context, Uri uri) {
+        com.moez.QKSMS.data.Message message = new com.moez.QKSMS.data.Message(context, uri);
+        String address = message.getAddress();
+        long threadId = message.getThreadId();
+        String uriS = uri.toString();
+        SidebandDBSource sideDb = new SidebandDBSource(context);
+        sideDb.createNewMessageSidebandDBEntry(uri.toString(), "", threadId, address);
     }
 }
