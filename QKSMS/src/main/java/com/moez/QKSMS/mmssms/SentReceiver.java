@@ -53,11 +53,15 @@ public class SentReceiver extends BroadcastReceiver {
                 if (uri != null) {
                     try {
                         if (LOCAL_LOGV) Log.v(TAG, "using supplied uri");
+                        com.moez.QKSMS.data.Message message = new com.moez.QKSMS.data.Message(context, uri);
+                        long person = message.getContactId();
                         ContentValues values = new ContentValues();
                         values.put("type", 2);
                         values.put("read", 1);
+                        if(person!=0)
+                            values.put("person", person);
                         context.getContentResolver().update(uri, values, null, null);
-                        recordSentMessage(context, uri);
+                        recordSentMessage(context, uri, message);
                     } catch (NullPointerException e) {
                         markFirstAsSent(context);
                     }
@@ -120,8 +124,7 @@ public class SentReceiver extends BroadcastReceiver {
         query.close();
     }
 
-    private void recordSentMessage(Context context, Uri uri) {
-        com.moez.QKSMS.data.Message message = new com.moez.QKSMS.data.Message(context, uri);
+    private void recordSentMessage(Context context, Uri uri, com.moez.QKSMS.data.Message message) {
         String address = message.getAddress();
         long threadId = message.getThreadId();
         String uriS = uri.toString();

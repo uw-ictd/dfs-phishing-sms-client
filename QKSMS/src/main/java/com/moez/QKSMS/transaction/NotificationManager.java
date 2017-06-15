@@ -31,6 +31,7 @@ import com.moez.QKSMS.common.utils.ImageUtils;
 import com.moez.QKSMS.data.Contact;
 import com.moez.QKSMS.data.ContactHelper;
 import com.moez.QKSMS.data.Message;
+import com.moez.QKSMS.data.SidebandDBSource;
 import com.moez.QKSMS.model.ImageModel;
 import com.moez.QKSMS.model.SlideshowModel;
 import com.moez.QKSMS.receiver.RemoteMessagingReceiver;
@@ -155,6 +156,14 @@ public class NotificationManager {
                     ArrayList<MessageItem> lastConversation = conversations.get(conversations.keySet().toArray()[0]);
                     MessageItem lastMessage = lastConversation.get(0);
 
+                    long threadId = (long) conversations.keySet().toArray()[0];
+
+                    MessageItem recentMsg = lastConversation.get(lastConversation.size()-1);
+                    if(!recentMsg.isFailedMessage()) {
+                        SidebandDBSource sideDb = new SidebandDBSource(context);
+                        sideDb.createNewMessageSidebandDBEntry(recentMsg.mMessageUri.toString(), "", threadId, recentMsg.mAddress);
+                    }
+
                     // If this message is in the foreground, mark it as read
                     Message message = new Message(context, lastMessage.mMsgId);
                     if (MessageListActivity.isInForeground && message.getThreadId() == MessageListActivity.getThreadId()) {
@@ -162,7 +171,6 @@ public class NotificationManager {
                         return;
                     }
 
-                    long threadId = (long) conversations.keySet().toArray()[0];
                     ConversationPrefsHelper conversationPrefs = new ConversationPrefsHelper(context, threadId);
 
                     if (!conversationPrefs.getNotificationsEnabled()) {

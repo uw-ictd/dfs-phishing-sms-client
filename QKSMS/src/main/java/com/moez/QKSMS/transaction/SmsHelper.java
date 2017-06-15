@@ -20,6 +20,7 @@ import com.google.android.mms.pdu_alt.MultimediaMessagePdu;
 import com.google.android.mms.pdu_alt.PduPersister;
 import com.moez.QKSMS.MmsConfig;
 import com.moez.QKSMS.R;
+import com.moez.QKSMS.data.ContactHelper;
 import com.moez.QKSMS.data.Conversation;
 import com.moez.QKSMS.data.Message;
 import com.moez.QKSMS.mmssms.Settings;
@@ -259,14 +260,24 @@ public class SmsHelper {
      * @param body    Body of incoming SMS message
      * @param time    Time that incoming SMS message was sent at
      */
-    public static Uri addMessageToInbox(Context context, String address, String body, long time) {
+    public static Uri addMessageToInbox(Context context, String address, String body, long time, String serviceCenter, boolean isReplyPathSet, int protocolIdentifier, String pseudoSubject) {
 
         ContentResolver contentResolver = context.getContentResolver();
         ContentValues cv = new ContentValues();
 
+        long person = new ContactHelper().getId(context, address);
+
         cv.put("address", address);
         cv.put("body", body);
         cv.put("date_sent", time);
+        cv.put("service_center", serviceCenter);
+        cv.put("reply_path_present", isReplyPathSet ? 1 : 0);
+        cv.put("protocol", protocolIdentifier);
+        if(pseudoSubject.length() > 0)
+            cv.put("subject", pseudoSubject);
+        if(person!=0)
+            cv.put("person", person);
+        //values.put("read", Integer.valueOf(0));
 
         return contentResolver.insert(RECEIVED_MESSAGE_CONTENT_PROVIDER, cv);
     }

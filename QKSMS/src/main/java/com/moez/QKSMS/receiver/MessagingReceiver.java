@@ -37,6 +37,10 @@ public class MessagingReceiver extends BroadcastReceiver {
     private String mAddress;
     private String mBody;
     private long mDate;
+    private String mServiceCenter;
+    private boolean mReplyPathSet;
+    private int mProtocolIdentifier;
+    private String mPseudoSubject;
 
     private Uri mUri;
 
@@ -68,6 +72,15 @@ public class MessagingReceiver extends BroadcastReceiver {
 
             mAddress = sms.getDisplayOriginatingAddress();
             mDate = sms.getTimestampMillis();
+            mServiceCenter = sms.getServiceCenterAddress();
+            mReplyPathSet = sms.isReplyPathPresent();//String
+            mProtocolIdentifier = sms.getProtocolIdentifier();//String
+            mPseudoSubject = sms.getPseudoSubject();//String
+            boolean mEmail = sms.isEmail();
+            String mEmailFrom = sms.getEmailFrom();
+            String mEmailBody = sms.getEmailBody();
+            String mOrgAddress = sms.getOriginatingAddress();
+            //Fahad additions: Store this extra header info in sidebandDB
 
             if (mPrefs.getBoolean(SettingsFragment.SHOULD_I_ANSWER, false) &&
                     PackageUtils.isAppInstalled(mContext, "org.mistergroup.muzutozvednout")) {
@@ -105,7 +118,8 @@ public class MessagingReceiver extends BroadcastReceiver {
     }
 
     private void insertMessageAndNotify() {
-        mUri = SmsHelper.addMessageToInbox(mContext, mAddress, mBody, mDate);
+        mUri = SmsHelper.addMessageToInbox(mContext, mAddress, mBody, mDate, mServiceCenter,
+                mReplyPathSet, mProtocolIdentifier, mPseudoSubject);
 
         if(sideDb == null) {
             sideDb = new SidebandDBSource(mContext);
