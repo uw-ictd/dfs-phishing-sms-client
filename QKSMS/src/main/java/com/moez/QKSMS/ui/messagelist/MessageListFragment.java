@@ -23,7 +23,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.provider.Telephony;
-import android.support.annotation.IntegerRes;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
@@ -58,7 +57,6 @@ import com.moez.QKSMS.data.Conversation;
 import com.moez.QKSMS.data.ConversationLegacy;
 import com.moez.QKSMS.data.Message;
 import com.moez.QKSMS.data.MessageSidebandDBHelper;
-import com.moez.QKSMS.data.UWDataOffloadHelper;
 import com.moez.QKSMS.enums.QKPreference;
 import com.moez.QKSMS.interfaces.ActivityLauncher;
 import com.moez.QKSMS.transaction.NotificationManager;
@@ -68,7 +66,6 @@ import com.moez.QKSMS.ui.SwipeBackLayout;
 import com.moez.QKSMS.ui.ThemeManager;
 import com.moez.QKSMS.ui.base.QKFragment;
 import com.moez.QKSMS.ui.base.RecyclerCursorAdapter;
-import com.moez.QKSMS.ui.conversationlist.ConversationListFragment;
 import com.moez.QKSMS.ui.delivery.DeliveryReportHelper;
 import com.moez.QKSMS.ui.delivery.DeliveryReportItem;
 import com.moez.QKSMS.ui.dialog.AsyncDialog;
@@ -89,8 +86,6 @@ import java.util.List;
 
 //UW add
 import com.moez.QKSMS.data.SidebandDBSource;
-
-import static android.R.attr.data;
 
 public class MessageListFragment extends QKFragment implements ActivityLauncher, SensorEventListener,
         LoaderManager.LoaderCallbacks<Cursor>, RecyclerCursorAdapter.MultiSelectListener, SwipeBackLayout.ScrollChangedListener,
@@ -1107,7 +1102,7 @@ public class MessageListFragment extends QKFragment implements ActivityLauncher,
         }
         for (long threadId : mAdapter.getSelectedItems().keySet()) {
             String addressee = (new ConversationLegacy(mContext, threadId)).getAddress();
-            if (sideDb.setConversationSidebandDBEntryByThreadID(threadId, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO, tag) == 0) {
+            if (sideDb.setConversationSidebandDBEntryByThreadID(threadId, MessageSidebandDBHelper.SIDEBAND_COLUMN_SMISHING_LABEL, tag) == 0) {
                 String title = getResources().getString(R.string.illegal_tag);
 
                 new QKDialog()

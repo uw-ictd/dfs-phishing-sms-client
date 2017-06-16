@@ -114,7 +114,7 @@ public class SentReceiver extends BroadcastReceiver {
             values.put("read", 1);
             context.getContentResolver().update(Uri.parse("content://sms/outbox"), values, "_id=" + id, null);
             SidebandDBSource sideDb = new SidebandDBSource(context);
-            sideDb.createNewMessageSidebandDBEntry("content://sms/"+id, "", threadId, address);
+            sideDb.createNewMessageSidebandDBEntry("content://sms/"+id, threadId, address);
         }
 
         query.close();
@@ -126,6 +126,6 @@ public class SentReceiver extends BroadcastReceiver {
         long threadId = message.getThreadId();
         String uriS = uri.toString();
         SidebandDBSource sideDb = new SidebandDBSource(context);
-        sideDb.createNewMessageSidebandDBEntry(uri.toString(), "", threadId, address);
+        sideDb.createNewMessageSidebandDBEntry(uri.toString(), threadId, address);
     }
 }
