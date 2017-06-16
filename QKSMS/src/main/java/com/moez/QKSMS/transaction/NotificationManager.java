@@ -161,7 +161,7 @@ public class NotificationManager {
                     MessageItem recentMsg = lastConversation.get(lastConversation.size()-1);
                     if(!recentMsg.isFailedMessage()) {
                         SidebandDBSource sideDb = new SidebandDBSource(context);
-                        sideDb.createNewMessageSidebandDBEntry(recentMsg.mMessageUri.toString(), "", threadId, recentMsg.mAddress);
+                        sideDb.createNewMessageSidebandDBEntry(recentMsg.mMessageUri.toString(), threadId, recentMsg.mAddress);
                     }
 
                     // If this message is in the foreground, mark it as read
