@@ -22,7 +22,7 @@ public class MessageSidebandDBHelper extends SQLiteOpenHelper {
     public static final String SIDEBAND_COLUMN_MESSAGEDB_ID = "messagedb_id";
     public static final String SIDEBAND_COLUMN_THREAD_ID = "thread_id";
     public static final String SIDEBAND_COLUMN_ADDRESSEE = "addressee";
-    public static final String SIDEBAND_COLUMN_EXTRAINFO = "smishing_marked_as";
+    public static final String SIDEBAND_COLUMN_SMISHING_LABEL = "smishing_marked_as";
     public static final String SIDEBAND_COLUMN_SENT_TO_UW = "sent_to_uw";
 
     //sms_privacy_db columns
@@ -38,7 +38,7 @@ public class MessageSidebandDBHelper extends SQLiteOpenHelper {
                     SIDEBAND_COLUMN_ADDRESSEE + " TEXT," +
                     SIDEBAND_COLUMN_MESSAGEDB_ID + " TEXT," +
                     SIDEBAND_COLUMN_THREAD_ID + " INTEGER," +
-                    SIDEBAND_COLUMN_EXTRAINFO + " TEXT," +
+                    SIDEBAND_COLUMN_SMISHING_LABEL + " TEXT," +
                     SIDEBAND_COLUMN_SENT_TO_UW + " TEXT DEFAULT '0')";
 
     //sms_privacy_db create

@@ -414,7 +414,7 @@ public class ConversationListFragment extends QKFragment implements LoaderManage
             // Get list of numbers in conversation and convert it to a string for display.
             String[] addressList = Conversation.get(mContext, threadId, true).getRecipients().getNumbers();
             String addresses = android.text.TextUtils.join(", ", addressList);
-            if (sideDb.setConversationSidebandDBEntryByThreadID(threadId, MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO, tag) == 0) {
+            if (sideDb.setConversationSidebandDBEntryByThreadID(threadId, MessageSidebandDBHelper.SIDEBAND_COLUMN_SMISHING_LABEL, tag) == 0) {
                 String title = getResources().getString(R.string.illegal_tag);
 
                 new QKDialog()

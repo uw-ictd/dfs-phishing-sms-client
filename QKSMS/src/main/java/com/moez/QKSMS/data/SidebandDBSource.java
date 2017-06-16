@@ -28,13 +28,12 @@ public class SidebandDBSource {
             MessageSidebandDBHelper.SIDEBAND_COLUMN_MESSAGEDB_ID,
             MessageSidebandDBHelper.SIDEBAND_COLUMN_THREAD_ID,
             MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE,
-            MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO,
+            MessageSidebandDBHelper.SIDEBAND_COLUMN_SMISHING_LABEL,
             MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW};
 
     //full column list of sms_privacy_db
     private String[] allColumnsPrivacy = { MessageSidebandDBHelper.PRIVACY_COLUMN_ID,
             MessageSidebandDBHelper.PRIVACY_COLUMN_THREAD_ID};
-            //MessageSidebandDBHelper.PRIVACY_COLUMN_ADDRESSEE};
 
     public SidebandDBSource(Context context) {
         dbHelper = new MessageSidebandDBHelper(context);
@@ -55,11 +54,12 @@ public class SidebandDBSource {
     }
 
     //sms_sideband_db accessors
-    public Boolean createNewMessageSidebandDBEntry(String messagedb_id, String extra_info, long thread_id, String addressee) {
+    public Boolean createNewMessageSidebandDBEntry(String messagedb_id, long thread_id, String addressee) {
         ContentValues values = new ContentValues();
         addressee = stripChars(addressee);
         values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_MESSAGEDB_ID, messagedb_id);
-        values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO, extra_info);
+        values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_SMISHING_LABEL,
+                getConversationSmishingLabelByThreadID(thread_id));
         values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_THREAD_ID, thread_id);
         values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE, addressee);
         if(getThreadIsPrivate(thread_id)) {
@@ -135,6 +135,8 @@ public class SidebandDBSource {
     }
 
 
+    // TODO: We want to be careful that we don't update individual messages for something like
+    //      the smishing label, so make this method more specific.
     public int setMessageSidebandDBEntryByArg(String messagedb_id, String field, String newVal) {
 
         ContentValues dataToUpdate = new ContentValues();
@@ -151,6 +153,40 @@ public class SidebandDBSource {
         close();
         return returnval;
 
+    }
+
+
+    /**
+     * Return the smishing_marked_as label from the sideband DB for a given thread ID.
+     * precondition: This method assumes all messages in the sideband DB with a given
+     *  thread_id will have the same label.
+     *  If the thread_id does not exist yet in the database, return an empty string.
+     */
+    // TODO: see getMessageSidebandDbEntryByThreadID as a good example.
+    public String getConversationSmishingLabelByThreadID(long thread_id) {
+        String [] columns = { MessageSidebandDBHelper.SIDEBAND_COLUMN_SMISHING_LABEL};
+        String where = MessageSidebandDBHelper.SIDEBAND_COLUMN_THREAD_ID + "=?";
+        String [] whereArgs = {Long.toString(thread_id)};
+        Cursor myCursor;
+
+        // the label to return.
+        String returnval = "";
+
+        openRead();
+        myCursor = database.query(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB,
+                columns, where, whereArgs, null, null, null);
+
+        // Try to move to the first entry.
+        if (myCursor.moveToFirst()) {
+            // Get the label from the smishing_label column.
+            returnval = myCursor.getString(myCursor.getColumnIndex(
+                    MessageSidebandDBHelper.SIDEBAND_COLUMN_SMISHING_LABEL));
+        }
+
+        myCursor.close();
+        close();
+
+        return returnval;
     }
 
     //sms_privacy_db accessors
@@ -196,7 +232,6 @@ public class SidebandDBSource {
         String [] columns = { MessageSidebandDBHelper.PRIVACY_COLUMN_THREAD_ID};
         String where = MessageSidebandDBHelper.PRIVACY_COLUMN_THREAD_ID + "=?";
         String [] whereArgs = {Long.toString(thread_id)};
-        //String [] whereArgs = {stripChars(addressee)};
         Cursor myCursor;
         boolean returnval;
 
@@ -208,7 +243,7 @@ public class SidebandDBSource {
         myCursor.close();
         close();
 
-
+        // TODO: Why is this code here?
         Cursor myCursor1;
         boolean returnval1;
 
@@ -220,6 +255,7 @@ public class SidebandDBSource {
 
         return returnval;
     }
+
 
     private int markAllThreadIDMsgSent(long thread_id) {
         ContentValues dataToUpdate = new ContentValues();
