@@ -54,7 +54,7 @@ public class SidebandDBSource {
         dbHelper.close();
     }
 
-    //sms_sideband_db accessors
+    //Create SMS/MMS entry in sideband DB with basic parameters
     public Boolean createNewMessageSidebandDBEntry(String messagedb_id, String extra_info, long thread_id, String addressee) {
         ContentValues values = new ContentValues();
         addressee = stripChars(addressee);
@@ -65,6 +65,34 @@ public class SidebandDBSource {
         if(getThreadIsPrivate(thread_id)) {
             values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW, MESSAGE_SENT);
         }
+        openWrite();
+        long insertId = database.insert(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB, null, values);
+        Cursor cursor = database.query(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB,
+                allColumnsSideband, MessageSidebandDBHelper.SIDEBAND_COLUMN_ID + " = " + insertId, null,
+                null, null, null);
+        cursor.moveToFirst();
+        cursor.close();
+        close();
+        return true;
+    }
+
+    //Create SMS entry in sideband DB with extra SMS header information
+    public Boolean createNewMessageSidebandDBEntry(String messagedb_id, String extra_info, long thread_id, String address, boolean is_email, String email_from, String email_body, String orgin_address) {
+        ContentValues values = new ContentValues();
+        address = stripChars(address);
+        values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_MESSAGEDB_ID, messagedb_id);
+        values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_EXTRAINFO, extra_info);
+        values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_THREAD_ID, thread_id);
+        //values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE, address);
+        /*values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE, is_email);
+        if(email_from!=null)
+            values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE, email_from);
+        if(email_body!=null)
+            values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE, email_body);
+        values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_ADDRESSEE, orgin_address);
+        if(getThreadIsPrivate(thread_id)) {
+            values.put(MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW, MESSAGE_SENT);
+        }*/
         openWrite();
         long insertId = database.insert(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB, null, values);
         Cursor cursor = database.query(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB,

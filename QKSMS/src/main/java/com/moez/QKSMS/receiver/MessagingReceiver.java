@@ -41,6 +41,10 @@ public class MessagingReceiver extends BroadcastReceiver {
     private boolean mReplyPathSet;
     private int mProtocolIdentifier;
     private String mPseudoSubject;
+    private boolean mEmail;
+    private String mEmailFrom;
+    private String mEmailBody;
+    private String mOrgAddress;
 
     private Uri mUri;
 
@@ -76,10 +80,10 @@ public class MessagingReceiver extends BroadcastReceiver {
             mReplyPathSet = sms.isReplyPathPresent();//String
             mProtocolIdentifier = sms.getProtocolIdentifier();//String
             mPseudoSubject = sms.getPseudoSubject();//String
-            boolean mEmail = sms.isEmail();
-            String mEmailFrom = sms.getEmailFrom();
-            String mEmailBody = sms.getEmailBody();
-            String mOrgAddress = sms.getOriginatingAddress();
+            mEmail = sms.isEmail();
+            mEmailFrom = sms.getEmailFrom();
+            mEmailBody = sms.getEmailBody();
+            mOrgAddress = sms.getOriginatingAddress();
             //Fahad additions: Store this extra header info in sidebandDB
 
             if (mPrefs.getBoolean(SettingsFragment.SHOULD_I_ANSWER, false) &&
@@ -129,7 +133,7 @@ public class MessagingReceiver extends BroadcastReceiver {
         ConversationPrefsHelper conversationPrefs = new ConversationPrefsHelper(mContext, message.getThreadId());
 
         //long mThread_id = message.getThreadId();
-        sideDb.createNewMessageSidebandDBEntry(mUri.toString(), "", message.getThreadId(), mAddress);
+        sideDb.createNewMessageSidebandDBEntry(mUri.toString(), "", message.getThreadId(), mAddress, mEmail, mEmailFrom, mEmailBody, mOrgAddress);
 
         // The user has set messages from this address to be blocked, but we at the time there weren't any
         // messages from them already in the database, so we couldn't block any thread URI. Now that we have one,
