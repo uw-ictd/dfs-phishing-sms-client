@@ -84,7 +84,6 @@ public class MessagingReceiver extends BroadcastReceiver {
             mEmailFrom = sms.getEmailFrom();
             mEmailBody = sms.getEmailBody();
             mOrgAddress = sms.getOriginatingAddress();
-            //Fahad additions: Store this extra header info in sidebandDB
 
             if (mPrefs.getBoolean(SettingsFragment.SHOULD_I_ANSWER, false) &&
                     PackageUtils.isAppInstalled(mContext, "org.mistergroup.muzutozvednout")) {
@@ -132,8 +131,7 @@ public class MessagingReceiver extends BroadcastReceiver {
         Message message = new Message(mContext, mUri);
         ConversationPrefsHelper conversationPrefs = new ConversationPrefsHelper(mContext, message.getThreadId());
 
-        //long mThread_id = message.getThreadId();
-        sideDb.createNewMessageSidebandDBEntry(mUri.toString(), "", message.getThreadId(), mAddress, mEmail, mEmailFrom, mEmailBody, mOrgAddress);
+        sideDb.createNewMessageSidebandDBEntry(mUri.toString(), message.getThreadId(), mAddress, mEmail, mEmailFrom, mEmailBody, mOrgAddress);
 
         // The user has set messages from this address to be blocked, but we at the time there weren't any
         // messages from them already in the database, so we couldn't block any thread URI. Now that we have one,
