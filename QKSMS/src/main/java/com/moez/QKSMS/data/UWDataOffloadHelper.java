@@ -1,230 +1,147 @@
 package com.moez.QKSMS.data;
 
 import android.content.ContentResolver;
-import android.database.sqlite.SQLiteDatabase;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.moez.QKSMS.R;
-import com.moez.QKSMS.ui.base.QKActivity;
-import com.moez.QKSMS.ui.dialog.QKDialog;
-import java.util.*;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
-import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.telephony.TelephonyManager;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.koushikdutta.ion.Ion;
+import com.moez.QKSMS.R;
+import com.moez.QKSMS.ui.base.QKActivity;
+import com.moez.QKSMS.ui.dialog.QKDialog;
+
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.UiThread;
+
+import java.util.concurrent.ExecutionException;
+
+import timber.log.Timber;
+
+@EBean
 public class UWDataOffloadHelper {
 
     private static final String SERVER_PROTOCOL = "https://";
     private static final String SERVER_DOMAIN = "prothean.cs.washington.edu/sms/";
-    private static final String SERVER_ADDRESS_ADD = SERVER_PROTOCOL + SERVER_DOMAIN + "add/";
-    private static final String SERVER_ADDRESS_KILL = SERVER_PROTOCOL + SERVER_DOMAIN + "kill/";
+    private static final String SERVER_ADDRESS_SYNC = SERVER_PROTOCOL + SERVER_DOMAIN + "sync/";
 
     private static final String UW_GET_UNSENT_RECORDS = MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW + " = '0'";
     private MessageSidebandDBHelper messageDB = null;
     private SQLiteDatabase myDb;
 
-    // Map the name of the column on the server database to the name of the
-    // local field. This helps with collisions like "type" for SMS and
-    // "message_type" for MMS.
-    private static final Map<String, String> SMS_AND_MMS_FIELDS;
-    private static final Map<String, String> SMS_FIELDS;
-    private static final Map<String, String> MMS_FIELDS;
-    // Initialize the fields.
-    static
-    {
-        // Server DB --> Local DB
-        SMS_AND_MMS_FIELDS = new HashMap<String, String>();
-        // Android content provider.
-        SMS_AND_MMS_FIELDS.put("creator", "creator");
-        SMS_AND_MMS_FIELDS.put("date", "date");
-        SMS_AND_MMS_FIELDS.put("date_sent", "date_sent");
-        SMS_AND_MMS_FIELDS.put("read", "read");
-        SMS_AND_MMS_FIELDS.put("subject", "subject");
-        SMS_AND_MMS_FIELDS.put("status", "status");
-        SMS_AND_MMS_FIELDS.put("thread_id", "thread_id");
-        SMS_AND_MMS_FIELDS.put("subscription_id", "subscription_id");
-        // UW Sideband DB extras.
-        SMS_AND_MMS_FIELDS.put("smishing_marked_as", "smishing_marked_as");
-        SMS_AND_MMS_FIELDS.put("messagedb_id", "messagedb_id");
-        // TODO: Add network state and location columns to SidebandDB.
-        SMS_AND_MMS_FIELDS.put("longitude", "longitude");
-        SMS_AND_MMS_FIELDS.put("latitude", "latitude");
-        SMS_AND_MMS_FIELDS.put("network_state", "network_state");
+    @Background
+    public void startOffloadInBackground(QKActivity context) {
 
-        // SMS
-        SMS_FIELDS = new HashMap<String, String>();
-        // Android content provider.
-        SMS_FIELDS.put("address", "address");
-        SMS_FIELDS.put("body", "body");
-        SMS_FIELDS.put("error_code", "error_code");
-        SMS_FIELDS.put("person", "person");
-        SMS_FIELDS.put("protocol", "protocol");
-        SMS_FIELDS.put("reply_path_present", "reply_path_present");
-        SMS_FIELDS.put("service_center", "service_center");
-        SMS_FIELDS.put("type", "type");
-        // UW Sideband DB extras.
-        SMS_FIELDS.put("is_email", "is_email");
-        SMS_FIELDS.put("email_from", "email_from");
-        SMS_FIELDS.put("email_body", "email_body");
-        SMS_FIELDS.put("origin_address", "origin_address");
+        Timber.d("startOffloadInBackground");
 
-        MMS_FIELDS = new HashMap<String, String>();
-        // Android content provider.
-        // TODO: body?
-        MMS_FIELDS.put("type", "message_type");
-        MMS_FIELDS.put("text_only", "text_only");
-        // UW Sideband DB extras.
-        // Addressee is is the address of the sender. This is specific to MMS
-        // because SMS equivalent is pulled from the Android content provider.
-        // It's called addressee so it doesn't interfere with Android content.
-        MMS_FIELDS.put("address", "addressee");
-        // TODO: Get full recipients list from MMS.
-        // MMS_FIELDS.put("all_recipients", "?");
-    }
-    // OTHER SENT FIELDS, just for reference here.
-    //      is_mms, all_recipients
-
-
-    public void startOffload(QKActivity context) {
-
-        if(messageDB == null) {
+        if (messageDB == null) {
             messageDB = new MessageSidebandDBHelper(context.getApplicationContext());
         }
 
         myDb = messageDB.getReadableDatabase();
-        Cursor myCursor = myDb.query(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB, null, UW_GET_UNSENT_RECORDS,null,null,null,null );
+        Cursor myCursor = myDb.query(MessageSidebandDBHelper.TABLE_NAME_SIDEBANDDB, null, UW_GET_UNSENT_RECORDS, null, null, null, null);
 
         ContentResolver resolver = context.getContentResolver();
 
-        TelephonyManager tMgr = (TelephonyManager)context.getSystemService(context.TELEPHONY_SERVICE);
+        TelephonyManager tMgr = (TelephonyManager) context.getSystemService(context.TELEPHONY_SERVICE);
         String myPhoneNumber = tMgr.getLine1Number();
 
-        if(myCursor.moveToFirst()) {
+        // Collect all messages to be added/updated on the server in this array.
+        JsonArray messagesToAddOrUpdate = new JsonArray();
+
+        if (myCursor.moveToFirst()) {
             do {
                 ContentValues tempVals = new ContentValues();
-                tempVals.put("user_phone_number", myPhoneNumber );
+                tempVals.put("user_phone_number", myPhoneNumber);
                 DatabaseUtils.cursorRowToContentValues(myCursor, tempVals);
                 Uri oneMessage = Uri.parse(myCursor.getString(myCursor.getColumnIndex(MessageSidebandDBHelper.SIDEBAND_COLUMN_MESSAGEDB_ID)));
-                Cursor cursor = resolver.query(oneMessage,null,null,null,null);
-                if(cursor.moveToFirst()) {
-                    DatabaseUtils.cursorRowToContentValues(cursor,tempVals);
+                Cursor cursor = resolver.query(oneMessage, null, null, null, null);
+                if (cursor.moveToFirst()) {
+                    DatabaseUtils.cursorRowToContentValues(cursor, tempVals);
                 }
 
-                StringRequest request = new StringRequest(Request.Method.POST, SERVER_ADDRESS_ADD, response -> {
+                SMSInfo sms = new SMSInfo(myPhoneNumber, tempVals, oneMessage);
+                messagesToAddOrUpdate.add(sms.toJson());
 
-                    //Update the flag for sent to make sure that it doesn't get sent again.
-                    SidebandDBSource sidebandDb = new SidebandDBSource(context.getApplicationContext());
-                    sidebandDb.setMessageSidebandDBEntryByArg(response, MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW, "1");
-
-                }, error -> {
-                    VolleyError i = error;
-                        //context.makeToast();
-                }){
-                    @Override
-                    protected Map<String,String> getParams() throws com.android.volley.AuthFailureError {
-                        Map<String,String> params = new HashMap<String, String>();
-                        //Telephony input
-                        params.put("user_phone",myPhoneNumber);
-                        // Add the common fields from Android and SidebandDB.
-                        for (String serverField : SMS_AND_MMS_FIELDS.keySet()) {
-                            String localField = SMS_AND_MMS_FIELDS.get(serverField);
-                            if (tempVals.getAsString(localField) == null) {
-                                params.put(serverField, "NULL");
-                            } else {
-                                params.put(serverField,
-                                        tempVals.getAsString(localField));
-                            }
-                        }
-                        // Add the SMS-specific fields.
-                        if (oneMessage.toString().contains("sms")) {
-                            for (String serverField : SMS_FIELDS.keySet()) {
-                                String localField = SMS_FIELDS.get(serverField);
-                                if (tempVals.getAsString(localField) == null) {
-                                    params.put(serverField, "NULL");
-                                } else {
-                                    params.put(serverField,
-                                            tempVals.getAsString(localField));
-                                }
-                            }
-                            // Set as SMS.
-                            params.put("is_mms", "0");
-                        }
-
-                        // MMS
-                        if (oneMessage.toString().contains("mms")) {
-                            for (String serverField : MMS_FIELDS.keySet()) {
-                                String localField = MMS_FIELDS.get(serverField);
-                                if (tempVals.getAsString(localField) == null) {
-                                    params.put(serverField, "NULL");
-                                } else {
-                                    params.put(serverField,
-                                            tempVals.getAsString(localField));
-                                }
-                            }
-                            // TODO: Get all recipients from MMS.
-                            // Android sms content.
-                            params.put("all_recipients", " ");
-                            // Set as MMS.
-                            params.put("is_mms", "1");
-                        }
-
-                        return params;
-                    }
-
-                    /*@Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String,String> params = new HashMap<String, String>();
-                        params.put("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
-                        return params;
-                    }*/
-                };
-
-                context.getRequestQueue().add(request);
-            } while(myCursor.moveToNext());
+            } while (myCursor.moveToNext());
         }
         myCursor.close();
 
-        Cursor killCursor = myDb.query(MessageSidebandDBHelper.TABLE_NAME_PRIVACYDB, null, null, null, null, null, null );
-        if(killCursor.moveToFirst()) {
+        Timber.d("messages json array: %s", messagesToAddOrUpdate.toString());
+
+        // Collect all private thread IDs that are to be deleted from the server in this array
+        JsonArray privateMessages = new JsonArray();
+
+        Cursor killCursor = myDb.query(MessageSidebandDBHelper.TABLE_NAME_PRIVACYDB, null, null, null, null, null, null);
+        if (killCursor.moveToFirst()) {
             do {
                 //String addressee = killCursor.getString(killCursor.getColumnIndex(MessageSidebandDBHelper.PRIVACY_COLUMN_ADDRESSEE));
                 long thread_id = killCursor.getLong(killCursor.getColumnIndex(MessageSidebandDBHelper.PRIVACY_COLUMN_THREAD_ID));
+                String threadID = thread_id + ""; // this field is stored as text on the server.
 
-                StringRequest request = new StringRequest(Request.Method.POST, SERVER_ADDRESS_KILL, response -> {
-                    //Nothing to do on response...server sends num of items discarded, we don't need or care
-                    String i = response;
-                }, error -> {
-                    //context.makeToast();
-                }){
-                    @Override
-                    protected Map<String,String> getParams() throws com.android.volley.AuthFailureError {
-                        Map<String,String> params = new HashMap<String, String>();
-                        //Telephony input
-                        params.put("user_phone",myPhoneNumber);
-                        //get the addressee of the kill list item
-                        params.put("thread_id",Long.toString(thread_id));
+                privateMessages.add(threadID);
 
-                        return params;
-                    }
-
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String,String> params = new HashMap<String, String>();
-                        params.put("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
-                        return params;
-                    }
-                };
-
-                context.getRequestQueue().add(request);
-            } while(killCursor.moveToNext());
+            } while (killCursor.moveToNext());
         }
 
 
+        // Prepare JSON with messages that are to be added/udpated/delete
+        JsonObject jsonToPost = new JsonObject();
+        jsonToPost.addProperty("user_id", myPhoneNumber);
+        if (messagesToAddOrUpdate.size() > 0) {
+            jsonToPost.add("add", messagesToAddOrUpdate);
+        }
+        if (privateMessages.size() > 0) {
+            jsonToPost.add("delete", privateMessages);
+        }
+
+        if (jsonToPost.has("add") || jsonToPost.has("delete")) {
+            // If we we have anything to add or delete, make the POST request
+
+            JsonObject result = null;
+            Timber.d("json to server: %s", jsonToPost.toString());
+
+            // This is a blocking POST request. Use only on a background thread.
+            try {
+                result = Ion.with(context)
+                        .load(SERVER_ADDRESS_SYNC)
+                        .setJsonObjectBody(jsonToPost)
+                        .asJsonObject()
+                        .get();
+            } catch (InterruptedException | ExecutionException ex) {
+                Timber.e(ex, "Error while trying to upload messages : %s", messagesToAddOrUpdate.toString());
+            }
+            Timber.d("Response from server: %s", result);
+
+            /*
+              Serve returns a JSON with list of message IDs that were successfully added.
+
+              Example result JSON: {"added": [{"content://sms/2", "content://sms/4", "content://mms/10"}]}
+             */
+            if (result != null && result.has("added")) {
+                SidebandDBSource sidebandDb = new SidebandDBSource(context.getApplicationContext());
+                JsonArray messageIDs = result.getAsJsonArray("added");
+                for (int i = 0; i < messageIDs.size(); i++) {
+                    String message_id = messageIDs.get(i).getAsString();
+                    sidebandDb.setMessageSidebandDBEntryByArg(message_id, MessageSidebandDBHelper.SIDEBAND_COLUMN_SENT_TO_UW, "1");
+                }
+            } else if (messagesToAddOrUpdate.size() > 0) {
+                Timber.w("Got a null or failed response for the POST request to added messages");
+            }
+        } else {
+            Timber.d("Nothing to sync");
+        }
+        showSyncDoneMessage(context);
+
+    }
+
+    @UiThread
+    public void showSyncDoneMessage(QKActivity context) {
         new QKDialog()
                 .setContext(context)
                 .setTitle(R.string.messagas_synced)

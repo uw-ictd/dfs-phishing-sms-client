@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'android-apt'
 apply plugin: 'io.fabric'
 
 repositories {
@@ -40,14 +41,10 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'qksms-proguard.pro'
+            minifyEnabled false
         }
         debug {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'qksms-proguard.pro'
+            minifyEnabled false
         }
     }
 
@@ -76,7 +73,15 @@ buildscript {
     dependencies {
         classpath 'me.tatarka:gradle-retrolambda:3.2.2'
         classpath 'io.fabric.tools:gradle:1.+'
+        // Since Android's Gradle plugin 0.11, need to use android-apt >= 1.3
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
     }
+}
+
+def AAVersion = '4.3.1'
+
+configurations {
+    apt
 }
 
 String leakCanaryVersion = '1.4-beta2'
@@ -113,4 +118,15 @@ dependencies {
     withAnalyticsCompile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;
     }
+    // Timer for logging. https://github.com/JakeWharton/timber
+    compile 'com.jakewharton.timber:timber:4.5.1'
+
+    // Ion - Android async http library
+    // https://github.com/koush/ion
+    compile 'com.koushikdutta.ion:ion:2.1.6'
+
+    // Android annotations
+    // https://github.com/androidannotations/androidannotations/wiki
+    apt "org.androidannotations:androidannotations:$AAVersion"
+    compile "org.androidannotations:androidannotations-api:$AAVersion"
 }
