@@ -45,6 +45,7 @@ public class SMSInfo {
     private String mms_message_type;
 
 
+    // TODO: 8/14/17 Several of above fields are actually Int. Use appropriate data type for these on the server and here.
     // SMS/MMS fields in phone database
     // https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns.html
 
@@ -127,6 +128,13 @@ public class SMSInfo {
             sms_email_body = cv.getAsString(EMAIL_BODY);
             sms_origin_address = cv.getAsString(ORIGIN_ADDRESS);
             sms_message_type = cv.getAsString(TYPE);
+
+            final String SENT_MESSAGE_TYPE = "2";
+
+            if (SENT_MESSAGE_TYPE.equalsIgnoreCase(sms_message_type)) {
+                date_sent = cv.getAsString(DATE);
+                date = null;
+            }
         }
 
         is_mms = message.toString().contains("mms");
